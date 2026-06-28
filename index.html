@@ -1,0 +1,3422 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>學生申訴流程法規查核輔助系統 v0.5.2-hotfix</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #182945;
+      --navy-800: #243a5c;
+      --navy-700: #345477;
+      --appeal-teal: #0f827c;
+      --appeal-teal-soft: #dcefed;
+      --deadline-gold: #c7902f;
+      --deadline-gold-soft: #fff0cc;
+      --risk-rose: #b94f64;
+      --risk-rose-soft: #fbe6ea;
+      --law-blue: #3266a8;
+      --law-blue-soft: #e5eef9;
+      --cream: #f8f1e6;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --ink: #1c2735;
+      --muted: #667487;
+      --line: #e1d7c8;
+      --shadow: 0 18px 42px rgba(24, 41, 69, 0.12);
+      --radius: 8px;
+      --scroll-offset: 120px;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(24, 41, 69, 0.1), rgba(248, 241, 230, 0) 240px),
+        var(--cream);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .topbar {
+      color: #fff;
+      background: var(--navy);
+      border-bottom: 5px solid var(--appeal-teal);
+    }
+
+    .topbar-inner {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 20px 0 18px;
+    }
+
+    .topbar-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .kicker {
+      margin: 0;
+      color: #f3dcae;
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 5px 12px;
+      color: #fff7e7;
+      background: rgba(15, 130, 124, 0.2);
+      border: 1px solid rgba(255, 240, 204, 0.36);
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.65rem, 3vw, 2.65rem);
+      line-height: 1.16;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin: 8px 0 0;
+      color: #e8f0f0;
+      font-size: clamp(0.96rem, 1.25vw, 1.08rem);
+    }
+
+    .notice {
+      max-width: 980px;
+      margin: 11px 0 0;
+      padding: 10px 12px;
+      color: #fff9ef;
+      background: rgba(255, 253, 248, 0.08);
+      border: 1px solid rgba(255, 240, 204, 0.32);
+      border-left: 5px solid var(--deadline-gold);
+      border-radius: var(--radius);
+      font-size: 0.94rem;
+    }
+
+    .primary-tabs-shell {
+      background: rgba(248, 241, 230, 0.88);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .primary-tabs {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      padding: 10px 0;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+    }
+
+    .primary-tab {
+      flex: 0 0 auto;
+      min-height: 38px;
+      padding: 8px 13px;
+      color: var(--navy);
+      background: rgba(255, 253, 248, 0.84);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 900;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .primary-tab[aria-selected="true"] {
+      color: #fff;
+      background: var(--navy);
+      border-color: var(--navy);
+      box-shadow: inset 0 -3px 0 var(--appeal-teal);
+    }
+
+    .primary-tab:focus-visible {
+      outline: 3px solid rgba(15, 130, 124, 0.28);
+      outline-offset: 2px;
+    }
+
+    .tab-context {
+      width: min(1480px, calc(100% - 32px));
+      margin: -2px auto 0;
+      padding: 0 0 10px;
+      color: #4f5f70;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .app-main {
+      width: min(1480px, calc(100% - 32px));
+      margin: 18px auto 28px;
+    }
+
+    .tab-panel[hidden] {
+      display: none !important;
+    }
+
+    .page-head {
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      background: rgba(255, 253, 248, 0.95);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      scroll-margin-top: var(--scroll-offset);
+    }
+
+    .page-head:focus-visible,
+    .page-head h2:focus-visible,
+    .detail-title:focus-visible,
+    .step-primary-card:focus-visible,
+    .step-primary-header:focus-visible,
+    .flow-panel:focus-visible {
+      outline: 3px solid rgba(15, 130, 124, 0.34);
+      outline-offset: 3px;
+    }
+
+    .page-head h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.25rem, 2vw, 1.7rem);
+      line-height: 1.25;
+    }
+
+    .page-head p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      max-width: 920px;
+    }
+
+    .usage-hint {
+      border-left: 6px solid var(--appeal-teal);
+      background:
+        linear-gradient(90deg, rgba(15, 130, 124, 0.08), rgba(255, 253, 248, 0.95) 42%),
+        rgba(255, 253, 248, 0.95);
+    }
+
+    .quick-entry-grid,
+    .external-tool-grid,
+    .split-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .quick-entry-card,
+    .external-tool-card,
+    .catalog-panel {
+      min-width: 0;
+      background: rgba(255, 253, 248, 0.95);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .quick-entry-card {
+      min-height: 170px;
+      padding: 18px;
+      text-align: left;
+      cursor: pointer;
+      border-top: 5px solid var(--appeal-teal);
+    }
+
+    .quick-entry-card:hover,
+    .quick-entry-card:focus-visible {
+      outline: 3px solid rgba(15, 130, 124, 0.22);
+      background: #ffffff;
+    }
+
+    .quick-entry-card h3,
+    .external-tool-card h3,
+    .catalog-panel h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 1.06rem;
+      line-height: 1.35;
+    }
+
+    .quick-entry-card p,
+    .external-tool-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .entry-meta {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      color: #334155;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .entry-meta strong {
+      color: var(--navy);
+    }
+
+    .quick-entry-action,
+    .external-link {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 34px;
+      margin-top: 14px;
+      padding: 7px 11px;
+      color: #fff;
+      background: var(--appeal-teal);
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 900;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+
+    .external-tool-card {
+      padding: 16px;
+      border-top: 5px solid var(--law-blue);
+    }
+
+    .external-tool-card.teal {
+      border-top-color: var(--appeal-teal);
+    }
+
+    .external-reminder {
+      padding: 10px 11px;
+      color: #334155;
+      background: #eef6f4;
+      border: 1px solid rgba(15, 130, 124, 0.18);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .catalog-panel {
+      padding: 16px;
+    }
+
+    .catalog-panel + .catalog-panel {
+      margin-top: 14px;
+    }
+
+    .catalog-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .risk-group {
+      display: grid;
+      gap: 10px;
+      padding-top: 6px;
+      border-top: 1px solid var(--line);
+    }
+
+    .risk-group.high-risk-group {
+      padding: 12px;
+      background: linear-gradient(180deg, #f8e7eb, #fff 58%);
+      border: 1px solid rgba(185, 79, 100, 0.22);
+      border-left: 5px solid var(--risk-rose);
+      border-radius: var(--radius);
+    }
+
+    .risk-group h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .launch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .launch-section,
+    .review-reminder-card {
+      min-width: 0;
+      padding: 16px;
+      background: rgba(255, 253, 248, 0.95);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .launch-section.full,
+    .review-reminder-card {
+      grid-column: 1 / -1;
+    }
+
+    .launch-section h3,
+    .review-reminder-card h3 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 1.06rem;
+      line-height: 1.35;
+    }
+
+    .manual-check-list,
+    .status-check-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .manual-check-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      padding: 8px 10px;
+      color: #334155;
+      background: #fbf7ef;
+      border: 1px solid rgba(225, 215, 200, 0.86);
+      border-radius: 7px;
+      line-height: 1.5;
+    }
+
+    .fake-checkbox {
+      color: var(--navy);
+      font-weight: 950;
+      line-height: 1.45;
+    }
+
+    .status-check-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 9px;
+      align-items: start;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .status-check-item .status-tag {
+      margin-top: 1px;
+    }
+
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0 0 12px;
+    }
+
+    .review-reminder-card {
+      border-left: 5px solid var(--deadline-gold);
+      background: linear-gradient(180deg, #fff7e6, rgba(255, 253, 248, 0.98) 54%);
+    }
+
+    .review-reminder-card p {
+      margin: 0;
+      color: #334155;
+      line-height: 1.65;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .filter-button {
+      min-height: 32px;
+      padding: 6px 10px;
+      color: var(--navy);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .filter-button[aria-pressed="true"] {
+      color: #fff;
+      background: var(--appeal-teal);
+      border-color: var(--appeal-teal);
+      box-shadow: 0 0 0 3px rgba(15, 130, 124, 0.16);
+    }
+
+    .filter-button:focus-visible,
+    .external-link:focus-visible {
+      outline: 3px solid rgba(15, 130, 124, 0.28);
+      outline-offset: 2px;
+    }
+
+    .workspace,
+    .appeal-workspace {
+      width: 100%;
+      margin: 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 32%) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .flow-panel,
+    .detail-panel,
+    .routing-panel,
+    .footer {
+      background: rgba(255, 253, 248, 0.95);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .flow-panel {
+      position: sticky;
+      top: 16px;
+      overflow: visible;
+    }
+
+    .panel-head {
+      padding: 15px 15px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fbf6ed;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0;
+      color: var(--navy);
+      font-size: 1rem;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    .step-count {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .flow-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 12px;
+      list-style: none;
+    }
+
+    .flow-group {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .flow-group-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 10px;
+      color: var(--navy);
+      background: #f3eadc;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .flow-group-count {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .flow-group-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 8px;
+      list-style: none;
+    }
+
+    .step-button {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      width: 100%;
+      min-height: 78px;
+      padding: 10px;
+      color: inherit;
+      background: transparent;
+      border: 0;
+      border-radius: 7px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .step-button:hover,
+    .step-button:focus-visible {
+      background: #edf5f3;
+      outline: 2px solid rgba(15, 130, 124, 0.24);
+      outline-offset: 0;
+    }
+
+    .step-button[aria-current="true"] {
+      background: var(--appeal-teal-soft);
+      box-shadow: inset 4px 0 0 var(--appeal-teal);
+    }
+
+    .step-button.is-active {
+      background: var(--appeal-teal-soft);
+      box-shadow: inset 4px 0 0 var(--appeal-teal);
+    }
+
+    .step-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 30px;
+      color: var(--navy);
+      background: #ebe4d8;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 900;
+    }
+
+    .step-button[aria-current="true"] .step-code {
+      color: #fff;
+      background: var(--appeal-teal);
+    }
+
+    .step-button.is-active .step-code {
+      color: #fff;
+      background: var(--appeal-teal);
+    }
+
+    .step-title {
+      display: block;
+      font-weight: 850;
+      line-height: 1.32;
+    }
+
+    .step-meta {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .main-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .routing-panel {
+      padding: 16px;
+    }
+
+    .routing-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .routing-head h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 1.04rem;
+      line-height: 1.35;
+    }
+
+    .routing-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      color: var(--appeal-teal);
+      background: var(--appeal-teal-soft);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .route-card {
+      min-height: 152px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--appeal-teal);
+      border-radius: var(--radius);
+    }
+
+    .route-card h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 0.96rem;
+      line-height: 1.35;
+    }
+
+    .route-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .route-action {
+      display: block;
+      margin-top: 8px;
+      color: var(--appeal-teal);
+      font-size: 0.86rem;
+      font-weight: 850;
+      line-height: 1.45;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 24px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .status-verified {
+      color: #23543f;
+      background: #dcefe5;
+      border: 1px solid rgba(35, 84, 63, 0.2);
+    }
+
+    .status-needsReview {
+      color: #71501a;
+      background: #f8ead0;
+      border: 1px solid rgba(113, 80, 26, 0.2);
+    }
+
+    .status-sourceMissing {
+      color: #8a4b55;
+      background: #f3e1e4;
+      border: 1px solid rgba(138, 75, 85, 0.18);
+    }
+
+    .status-localRuleNeeded {
+      color: #334f78;
+      background: #e5edf7;
+      border: 1px solid rgba(51, 79, 120, 0.2);
+    }
+
+    .status-externalProcedure {
+      color: #244b55;
+      background: #deecef;
+      border: 1px solid rgba(36, 75, 85, 0.2);
+    }
+
+    .status-externalCheckdesk {
+      color: #23534f;
+      background: #dceeed;
+      border: 1px solid rgba(35, 83, 79, 0.2);
+    }
+
+    .status-sourcePending {
+      color: #7b5860;
+      background: #eee4e6;
+      border: 1px solid rgba(123, 88, 96, 0.18);
+    }
+
+    .detail-panel,
+    .step-primary-card {
+      overflow: visible;
+      background: var(--paper);
+    }
+
+    .step-primary-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      scroll-margin-top: var(--scroll-offset);
+    }
+
+    .detail-header,
+    .step-primary-header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 20px;
+      color: var(--ink);
+      background: #fbf7ef;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: var(--scroll-offset);
+    }
+
+    .detail-topline {
+      display: contents;
+    }
+
+    .active-code,
+    .step-primary-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      min-height: 34px;
+      padding: 5px 12px;
+      color: #fff;
+      background: var(--appeal-teal);
+      border-radius: 999px;
+      font-weight: 950;
+      letter-spacing: 0.02em;
+    }
+
+    .eyebrow {
+      margin: 0 0 2px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .version-chip,
+    .step-primary-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 10px;
+      color: var(--appeal-teal);
+      background: var(--appeal-teal-soft);
+      border: 1px solid rgba(15, 130, 124, 0.22);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .detail-title {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.34rem, 2vw, 2rem);
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .detail-summary {
+      max-width: 920px;
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .card-body,
+    .step-primary-body {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .check-section {
+      min-height: 178px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--appeal-teal);
+      border-radius: var(--radius);
+    }
+
+    .check-section.full {
+      grid-column: 1 / -1;
+    }
+
+    .check-section.deadline {
+      border-left-color: var(--deadline-gold);
+      background: linear-gradient(180deg, var(--deadline-gold-soft), #fff 46%);
+    }
+
+    .check-section.risk {
+      border-left-color: var(--risk-rose);
+      background: linear-gradient(180deg, var(--risk-rose-soft), #fff 46%);
+    }
+
+    .check-section.law {
+      border-left-color: var(--law-blue);
+      background: linear-gradient(180deg, var(--law-blue-soft), #fff 46%);
+    }
+
+    .check-section h3 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+
+    .check-section p {
+      margin: 0;
+      color: #334155;
+    }
+
+    .check-list {
+      margin: 0;
+      padding-left: 1.18em;
+    }
+
+    .check-list li + li {
+      margin-top: 6px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .doc-chip,
+    .law-chip,
+    .branch-chip {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      min-height: 30px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 850;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .doc-chip {
+      color: var(--navy);
+      background: #f2eadf;
+      border: 1px solid var(--line);
+    }
+
+    .law-chip {
+      color: var(--law-blue);
+      background: var(--law-blue-soft);
+      border: 1px solid rgba(50, 102, 168, 0.24);
+      gap: 6px;
+    }
+
+    .branch-chip {
+      color: var(--appeal-teal);
+      background: var(--appeal-teal-soft);
+      border: 1px solid rgba(15, 130, 124, 0.24);
+    }
+
+    .next-actions {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .next-actions li {
+      padding: 10px 11px;
+      background: #fbf7ef;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+    }
+
+    .document-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .document-ref,
+    .assist-details {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .document-ref summary,
+    .assist-details summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      color: var(--navy);
+      background: #fbf7ef;
+      cursor: pointer;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .document-ref summary::-webkit-details-marker,
+    .assist-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .document-body,
+    .assist-body {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .document-meta,
+    .assist-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .assist-panel {
+      display: grid;
+      gap: 12px;
+    }
+
+    .assist-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .assist-card {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--appeal-teal);
+      border-radius: var(--radius);
+    }
+
+    .assist-card.high-risk {
+      border-left-color: var(--risk-rose);
+      background: linear-gradient(180deg, var(--risk-rose-soft), #fff 42%);
+    }
+
+    .assist-card h4 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .assist-card p {
+      margin: 0;
+      color: #334155;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .assist-card ul {
+      margin: 0;
+      padding-left: 1.15em;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+
+    .assist-card li + li {
+      margin-top: 5px;
+    }
+
+    .assist-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .risk-level {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .risk-level.high {
+      color: #8a2d42;
+      background: #f6dfe4;
+    }
+
+    .risk-level.medium {
+      color: #785217;
+      background: #f6e8cd;
+    }
+
+    .risk-level.low {
+      color: #3f607e;
+      background: #e4edf5;
+    }
+
+    .back-to-flow {
+      display: none;
+      width: fit-content;
+      margin: 0 18px 18px;
+      padding: 8px 12px;
+      color: var(--navy);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .back-to-flow:hover,
+    .back-to-flow:focus-visible {
+      outline: 2px solid rgba(15, 130, 124, 0.28);
+      background: var(--appeal-teal-soft);
+    }
+
+    .footer {
+      padding: 14px 16px;
+      color: var(--muted);
+      background: #f6efe5;
+      text-align: center;
+      font-size: 0.88rem;
+      box-shadow: none;
+    }
+
+    .footer p {
+      margin: 0;
+    }
+
+    .footer p + p {
+      margin-top: 5px;
+    }
+
+    .footer strong {
+      color: var(--navy);
+    }
+
+    .footer-status {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(225, 215, 200, 0.95);
+    }
+
+    @media (min-width: 981px) {
+      body {
+        overflow-x: hidden;
+      }
+
+      .app-shell {
+        min-height: 100vh;
+      }
+
+      .topbar {
+        flex: 0 0 auto;
+      }
+
+      .primary-tabs-shell {
+        flex: 0 0 auto;
+      }
+
+      .app-main {
+        margin-top: 16px;
+        margin-bottom: 16px;
+        overflow: visible;
+      }
+
+      .tab-panel {
+        min-height: 0;
+        overflow: visible;
+        overscroll-behavior: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(24, 41, 69, 0.32) rgba(255, 253, 248, 0.55);
+      }
+
+      #panel-general {
+        overflow: visible;
+      }
+
+      #panel-general .workspace {
+        min-height: auto;
+        align-items: start;
+        overflow: visible;
+      }
+
+      .flow-panel {
+        position: sticky;
+        top: 0;
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(24, 41, 69, 0.32) rgba(255, 253, 248, 0.55);
+      }
+
+      .main-stack {
+        min-height: 0;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .flow-panel::-webkit-scrollbar,
+      .main-stack::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .flow-panel::-webkit-scrollbar-track,
+      .main-stack::-webkit-scrollbar-track {
+        background: rgba(255, 253, 248, 0.55);
+      }
+
+      .flow-panel::-webkit-scrollbar-thumb,
+      .main-stack::-webkit-scrollbar-thumb,
+      .tab-panel::-webkit-scrollbar-thumb {
+        background: rgba(24, 41, 69, 0.26);
+        border-radius: 999px;
+      }
+    }
+
+    @media (max-width: 1160px) {
+      .route-grid,
+      .quick-entry-grid,
+      .external-tool-grid,
+      .split-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-panel {
+        position: static;
+      }
+
+      .back-to-flow {
+        display: inline-flex;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar-inner,
+      .primary-tabs,
+      .app-main {
+        width: min(100% - 22px, 1480px);
+      }
+
+      .topbar-line,
+      .routing-head,
+      .detail-topline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .detail-header,
+      .step-primary-header {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .status-pill,
+      .version-chip,
+      .routing-badge {
+        white-space: normal;
+      }
+
+      .route-grid,
+      .quick-entry-grid,
+      .external-tool-grid,
+      .split-grid,
+      .launch-grid,
+      .section-grid,
+      .assist-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .document-ref summary,
+      .assist-details summary,
+      .assist-card-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .step-button {
+        min-height: 86px;
+      }
+
+      .card-body {
+        padding: 14px;
+      }
+
+      .check-section {
+        min-height: auto;
+        padding: 14px;
+      }
+    }
+
+    @media print {
+      @page {
+        margin: 14mm;
+      }
+
+      * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+
+      html,
+      body,
+      .app-shell,
+      .app-main,
+      .tab-panel,
+      .workspace,
+      .detail-panel,
+      .step-primary-card,
+      .catalog-panel,
+      .launch-section,
+      .review-reminder-card,
+      .footer {
+        color: #1f2933 !important;
+        background: #fff !important;
+        overflow: visible !important;
+        height: auto !important;
+        max-height: none !important;
+      }
+
+      .topbar {
+        color: #111827 !important;
+        background: #fff !important;
+        border-bottom: 1px solid #9ca3af !important;
+      }
+
+      .topbar-inner,
+      .app-main {
+        width: 100% !important;
+        margin: 0 !important;
+      }
+
+      .subtitle,
+      .notice,
+      .tab-context,
+      .footer,
+      .footer-status {
+        color: #374151 !important;
+      }
+
+      .notice,
+      .page-head,
+      .flow-panel,
+      .detail-panel,
+      .check-section,
+      .assist-details,
+      .document-ref,
+      .external-tool-card,
+      .catalog-panel,
+      .assist-card,
+      .risk-group,
+      .launch-section,
+      .review-reminder-card,
+      .manual-check-item {
+        background: #fff !important;
+        border-color: #b8c0ca !important;
+      }
+
+      .primary-tabs-shell,
+      .back-to-flow {
+        display: none !important;
+      }
+
+      .tab-panel[hidden] {
+        display: none !important;
+      }
+
+      .workspace,
+      .appeal-workspace,
+      .quick-entry-grid,
+      .external-tool-grid,
+      .split-grid,
+      .launch-grid,
+      .section-grid,
+      .assist-card-grid,
+      .route-grid {
+        display: block !important;
+        width: auto !important;
+        margin: 0 !important;
+      }
+
+      .flow-panel,
+      .detail-panel,
+      .step-primary-card,
+      .page-head,
+      .check-section,
+      .assist-details,
+      .document-ref,
+      .external-tool-card,
+      .catalog-panel,
+      .assist-card,
+      .risk-group,
+      .launch-section,
+      .review-reminder-card,
+      .footer {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .detail-header,
+      .step-primary-header,
+      .panel-head,
+      .document-ref summary,
+      .assist-details summary {
+        color: #111827 !important;
+        background: #fff !important;
+        border-color: #b8c0ca !important;
+      }
+
+      .status-tag,
+      .risk-level,
+      .active-code,
+      .step-primary-code,
+      .version-chip,
+      .step-primary-status,
+      .step-code,
+      .status-pill {
+        color: #111827 !important;
+        background: #fff !important;
+        border: 1px solid #9ca3af !important;
+      }
+
+      a {
+        color: #111827 !important;
+        text-decoration: underline !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-line">
+          <p class="kicker">STUDENT APPEAL CHECKDESK</p>
+          <span class="status-pill">靜態查核工具 · 不儲存個案資料</span>
+        </div>
+        <h1>學生申訴流程法規查核輔助系統</h1>
+        <p class="subtitle">v0.5.2-hotfix｜行政承辦流程檢核草稿，修正 S014 與專法分流入口的導覽落點。</p>
+        <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
+      </div>
+    </header>
+
+    <div class="primary-tabs-shell">
+      <div class="primary-tabs" role="tablist" aria-label="學生申訴查核主頁籤">
+        <button class="primary-tab" id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="panel-overview" data-tab="overview">總覽</button>
+        <button class="primary-tab" id="tab-general" type="button" role="tab" aria-selected="false" aria-controls="panel-general" data-tab="general">一般申訴</button>
+        <button class="primary-tab" id="tab-reappeal" type="button" role="tab" aria-selected="false" aria-controls="panel-reappeal" data-tab="reappeal">再申訴</button>
+        <button class="primary-tab" id="tab-routes" type="button" role="tab" aria-selected="false" aria-controls="panel-routes" data-tab="routes">專法分流</button>
+        <button class="primary-tab" id="tab-committee" type="button" role="tab" aria-selected="false" aria-controls="panel-committee" data-tab="committee">申評會組成</button>
+        <button class="primary-tab" id="tab-doc-risk" type="button" role="tab" aria-selected="false" aria-controls="panel-doc-risk" data-tab="docRisk">表件與風險</button>
+        <button class="primary-tab" id="tab-launch" type="button" role="tab" aria-selected="false" aria-controls="panel-launch" data-tab="launch">上線前驗收</button>
+      </div>
+      <p class="tab-context" id="tabContext">從常見承辦情境快速進入查核。</p>
+    </div>
+
+    <main class="app-main" aria-label="學生申訴流程查核工具">
+      <section class="tab-panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" data-panel="overview">
+        <div class="page-head usage-hint">
+          <h2>先判斷路線，再檢查期限與程序</h2>
+          <p>本系統協助承辦人快速判斷學生申訴案件應走哪一條程序，並查核期限、申評會組成、表件與高風險節點。本工具不儲存個案資料，也不取代申評會判斷。</p>
+        </div>
+        <div class="quick-entry-grid" id="quickEntryGrid"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-general" role="tabpanel" aria-labelledby="tab-general" data-panel="general" hidden>
+        <div class="workspace appeal-workspace general-workspace" aria-label="S000 到 S014 一般申訴檢核流程">
+          <aside class="flow-panel" aria-label="流程目錄">
+            <div class="panel-head">
+              <h2 class="panel-title">
+                <span>流程目錄</span>
+                <span class="step-count">S000-S014</span>
+              </h2>
+            </div>
+            <nav>
+              <ol class="flow-list" id="flowList"></ol>
+            </nav>
+          </aside>
+
+          <div class="main-stack">
+            <article class="detail-panel step-primary-card" id="checkCard" aria-live="polite" data-step-primary-card>
+              <header class="detail-header step-primary-header">
+                <div class="detail-topline">
+                  <span class="active-code step-primary-code" id="activeCode">S000</span>
+                  <div>
+                    <p class="eyebrow">目前節點</p>
+                    <h2 class="detail-title" id="detailTitle"></h2>
+                    <p class="detail-summary" id="detailSummary"></p>
+                  </div>
+                  <span class="version-chip step-primary-status">v0.5.2-hotfix</span>
+                </div>
+              </header>
+
+              <div class="card-body step-primary-body">
+                <div class="section-grid" id="sectionGrid"></div>
+              </div>
+              <button class="back-to-flow" type="button" id="backToFlow">回到流程目錄</button>
+            </article>
+
+            <section class="assist-panel" aria-label="一般申訴輔助查核區塊">
+              <details class="assist-details">
+                <summary>
+                  <span>本步驟表件與紀錄</span>
+                  <span class="status-tag status-needsReview">只顯示提醒，不產出文件</span>
+                </summary>
+                <div class="assist-body" id="stepDocuments"></div>
+              </details>
+
+              <details class="assist-details">
+                <summary>
+                  <span>本步驟法規索引</span>
+                  <span class="status-tag status-needsReview">依 legalStatus 人工確認</span>
+                </summary>
+                <div class="assist-body" id="stepLaws"></div>
+              </details>
+
+              <details class="assist-details">
+                <summary>
+                  <span>期限規則</span>
+                  <span class="status-tag status-needsReview">文字提醒，不做日期計算</span>
+                </summary>
+                <div class="assist-body" id="deadlineRules"></div>
+              </details>
+
+              <details class="assist-details">
+                <summary>
+                  <span>申評會組成</span>
+                  <span class="status-tag status-localRuleNeeded">高中／國中小分開檢核</span>
+                </summary>
+                <div class="assist-body" id="committeeRules"></div>
+              </details>
+
+              <details class="assist-details">
+                <summary>
+                  <span>程序風險</span>
+                  <span class="status-tag status-needsReview">承辦提示</span>
+                </summary>
+                <div class="assist-body" id="riskRules"></div>
+              </details>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-reappeal" role="tabpanel" aria-labelledby="tab-reappeal" data-panel="reappeal" hidden>
+        <div class="page-head">
+          <h2>再申訴</h2>
+          <p>獨立檢核再申訴期限、補正、管轄與行政訴訟提醒，不混入一般申訴主流程。</p>
+        </div>
+        <div class="assist-card-grid" id="reAppealPanel"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-routes" role="tabpanel" aria-labelledby="tab-routes" data-panel="routes" hidden>
+        <div class="page-head">
+          <h2>專法分流</h2>
+          <p>本頁只做分流提醒，不取代專法檢核系統；不要把應走專法或外部程序的案件硬放進一般學生申訴。</p>
+        </div>
+        <div class="external-tool-grid" id="externalTools"></div>
+        <section class="routing-panel" aria-labelledby="routingTitle">
+          <div class="routing-head">
+            <h2 id="routingTitle">其他分流提醒</h2>
+            <span class="routing-badge">受理前與審議中持續檢核</span>
+          </div>
+          <div class="route-grid" id="specialRoutes"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="panel-committee" role="tabpanel" aria-labelledby="tab-committee" data-panel="committee" hidden>
+        <div class="page-head">
+          <h2>申評會組成</h2>
+          <p>申評會組成錯誤會影響程序正當性，開會前請先完成本頁檢核。本頁不做名單輸入，也不做比例計算器。</p>
+        </div>
+        <div class="assist-card-grid" id="committeePage"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-doc-risk" role="tabpanel" aria-labelledby="tab-doc-risk" data-panel="docRisk" hidden>
+        <div class="page-head">
+          <h2>表件與風險</h2>
+          <p>集中查看表件提醒與程序風險。篩選只在目前畫面切換，不使用瀏覽器儲存。</p>
+        </div>
+        <div class="split-grid">
+          <section class="catalog-panel" aria-labelledby="documentCatalogTitle">
+            <h3 id="documentCatalogTitle">表件清單</h3>
+            <div class="catalog-grid" id="documentCatalog"></div>
+          </section>
+          <section class="catalog-panel" aria-labelledby="riskCatalogTitle">
+            <h3 id="riskCatalogTitle">程序風險</h3>
+            <div class="filter-bar" id="riskFilters" aria-label="風險節點篩選"></div>
+            <div class="catalog-grid" id="riskCatalog"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-launch" role="tabpanel" aria-labelledby="tab-launch" data-panel="launch" hidden>
+        <div class="page-head">
+          <h2>上線前驗收</h2>
+          <p>進入人工試用與 GitHub Pages 上線前，依靜態工具邊界、法規資料狀態、流程節點、外部連結與手機版可讀性逐項點測。</p>
+        </div>
+
+        <div class="launch-grid">
+          <section class="launch-section" aria-labelledby="staticBoundaryTitle">
+            <h3 id="staticBoundaryTitle">A. 靜態工具邊界檢查</h3>
+            <ul class="manual-check-list">
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>仍為單檔 <code>index.html</code>。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未使用 fetch。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未使用 localStorage、sessionStorage、indexedDB。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未加入登入功能。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未加入上傳功能。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未加入 AI 問答功能。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未加入個案資料輸入欄位。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未加入正式法律文件產製功能。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未加入日期自動計算器。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>未儲存任何個案資料。</span></li>
+            </ul>
+          </section>
+
+          <section class="launch-section" aria-labelledby="legalStatusCheckTitle">
+            <h3 id="legalStatusCheckTitle">B. 法規資料狀態檢查</h3>
+            <div class="status-strip" aria-label="法規資料狀態標籤">
+              <span class="status-tag status-verified">已核對</span>
+              <span class="status-tag status-needsReview">待人工確認</span>
+              <span class="status-tag status-sourceMissing">來源缺漏</span>
+              <span class="status-tag status-externalProcedure">外部專法程序</span>
+              <span class="status-tag status-localRuleNeeded">需地方或校內規範補充</span>
+            </div>
+            <ul class="status-check-list">
+              <li class="status-check-item"><span class="status-tag status-verified">已核對</span><span>一般學生申訴主要流程、期限、申評會組成等核心規則。</span></li>
+              <li class="status-check-item"><span class="status-tag status-needsReview">待人工確認</span><span>地方或校內規範、部分實務文書與內部流程。</span></li>
+              <li class="status-check-item"><span class="status-tag status-sourceMissing">來源缺漏</span><span>曾經由 NotebookLM 標示來源誤植或待補資料。</span></li>
+              <li class="status-check-item"><span class="status-tag status-externalProcedure">外部專法程序</span><span>性平與霸凌細部流程不在本系統展開，改連外部專法檢核系統。</span></li>
+              <li class="status-check-item"><span class="status-tag status-localRuleNeeded">需地方或校內規範補充</span><span>上線前仍應由承辦單位依最新法規、主管機關函釋與校內規範複核。</span></li>
+            </ul>
+          </section>
+
+          <section class="launch-section" aria-labelledby="flowClickTestTitle">
+            <h3 id="flowClickTestTitle">C. 流程節點人工點測</h3>
+            <ul class="manual-check-list">
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>總覽頁 4 張快速入口皆可正常切換。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>一般申訴頁 S000-S014 共 15 個節點皆可切換。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>S000 顯示「適用範圍與專法分流」。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>S004 顯示期限相關檢核內容。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>S007 顯示申評會組成相關檢核內容。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>S012 顯示評議決定書與救濟告知相關檢核內容。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>S014 顯示再申訴提醒相關檢核內容。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>輔助摺疊區塊出現在主卡下方。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>右側主卡沒有空白深藍橫幅或遮蔽文字。</span></li>
+            </ul>
+          </section>
+
+          <section class="launch-section" aria-labelledby="externalLinkCheckTitle">
+            <h3 id="externalLinkCheckTitle">D. 專法分流與外部連結檢查</h3>
+            <ul class="manual-check-list">
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>專法分流頁可看到性平事件檢核系統連結。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>專法分流頁可看到霸凌事件檢核系統連結。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>性平外部連結使用 <code>target="_blank"</code>。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>性平外部連結使用 <code>rel="noopener noreferrer"</code>。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>霸凌外部連結使用 <code>target="_blank"</code>。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>霸凌外部連結使用 <code>rel="noopener noreferrer"</code>。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>系統未展開性平未核對細部條文。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>系統未展開霸凌未核對細部條文。</span></li>
+            </ul>
+          </section>
+
+          <section class="launch-section full" aria-labelledby="mobileReadabilityTitle">
+            <h3 id="mobileReadabilityTitle">E. 手機版與可讀性檢查</h3>
+            <ul class="manual-check-list">
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>手機版無整頁水平溢出。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>主頁籤在小螢幕可閱讀。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>一般申訴頁在小螢幕可上下閱讀。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>左側流程目錄在手機版不固定壓縮畫面。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>主查核卡文字不被裁切。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>風險標籤不只靠顏色判斷，也有文字標籤。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>focus 狀態清楚可見。</span></li>
+              <li class="manual-check-item"><span class="fake-checkbox" aria-hidden="true">□</span><span>外部連結有可理解的 aria-label。</span></li>
+            </ul>
+          </section>
+
+          <aside class="review-reminder-card" aria-labelledby="finalReviewTitle">
+            <h3 id="finalReviewTitle">上線前仍需人工複核</h3>
+            <p>本系統為靜態程序查核輔助工具，法規內容與流程提示仍須由承辦單位依最新法規、主管機關函釋、地方規範與校內學生申訴評議規定進行人工複核。系統不得取代申評會之個案事實認定、法律適用與評議決定。</p>
+          </aside>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.2-hotfix｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜使用方式：本頁只做程序查核，不取代申評會判斷。</p>
+        <p class="footer-status">資料狀態說明：法規資料分為已核對、待人工確認、來源缺漏、需地方或校內規範補充、外部專法程序等狀態。上線前仍應由承辦單位依最新法規與主管機關規定複核。</p>
+        <p>維護者：江志宏｜學生申訴流程法規查核輔助系統</p>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const LEGAL_STATUS_LABELS = {
+      verified: "已核對",
+      needsReview: "待人工確認",
+      sourceMissing: "來源缺漏",
+      localRuleNeeded: "需地方或校內規範補充",
+      externalProcedure: "應改走外部專法流程",
+      externalCheckdesk: "已有獨立檢核系統可開啟",
+      sourcePending: "本系統不收錄專法細部條文"
+    };
+
+    const TAB_DESCRIPTIONS = {
+      overview: "從常見承辦情境快速進入查核。",
+      general: "依 S000-S014 檢查一般學生申訴流程。",
+      reappeal: "查核不服學校評議決定後的再申訴程序。",
+      routes: "確認是否應改走性平、霸凌、特教或其他程序。",
+      committee: "開會前檢查委員組成、出席、迴避與表決。",
+      docRisk: "彙整常用表件與高風險程序節點。",
+      launch: "依靜態工具邊界、法規狀態、流程節點、外部連結與手機版檢查上線前風險。"
+    };
+
+    const QUICK_ENTRIES = [
+      {
+        title: "我剛收到申訴書",
+        scenario: "剛收件，還不確定能不能走一般學生申訴。",
+        destination: "一般申訴 S000 分流檢核。",
+        targetTab: "general",
+        stepCode: "S000",
+        scrollTarget: "stepPrimaryCard",
+        action: "進入一般申訴 S000"
+      },
+      {
+        title: "我要檢查期限有沒有逾期",
+        scenario: "需要確認高中 30 日、國中小 40 日、補正或再申訴期限。",
+        destination: "一般申訴 S004 期限檢核。",
+        targetTab: "general",
+        stepCode: "S004",
+        scrollTarget: "stepPrimaryCard",
+        action: "進入一般申訴 S004"
+      },
+      {
+        title: "我要準備開申評會",
+        scenario: "會議前需要確認委員組成、迴避、出席與表決方式。",
+        destination: "申評會組成頁。",
+        targetTab: "committee",
+        scrollTarget: "panelHeading",
+        action: "查看申評會組成"
+      },
+      {
+        title: "我要準備決定書與救濟告知",
+        scenario: "評議後要檢查決定書、送達與再申訴教示。",
+        destination: "一般申訴 S012 評議決定書。",
+        targetTab: "general",
+        stepCode: "S012",
+        scrollTarget: "stepPrimaryCard",
+        action: "進入一般申訴 S012"
+      },
+      {
+        title: "我要確認是否要專法分流",
+        scenario: "申訴內容可能涉及性平、霸凌、特教、兒少保護或教師不當管教，需先判斷是否應改走其他程序。",
+        destination: "專法分流頁。",
+        targetTab: "routes",
+        scrollTarget: "panelHeading",
+        action: "進入專法分流頁"
+      }
+    ];
+
+    const EXTERNAL_TOOLS = [
+      {
+        title: "疑似校園性別事件",
+        description: "如涉及性侵害、性騷擾、性霸凌、性別歧視、性意味言詞、身體界線爭議，應優先依性平專法程序處理。",
+        reminder: "本系統不展開性平事件完整程序；疑似性平事件請改用性平事件檢核系統。",
+        buttonText: "開啟性平事件檢核系統",
+        url: "https://smallcannon-arch.github.io/gender-checkdesk/",
+        legalStatus: "externalCheckdesk"
+      },
+      {
+        title: "疑似校園霸凌事件",
+        description: "如涉及持續或反覆排擠、嘲笑、網路攻擊、肢體或關係霸凌疑義，應優先依霸凌專法程序處理。",
+        reminder: "本系統不展開霸凌事件完整程序；疑似霸凌事件請改用霸凌事件檢核系統。",
+        buttonText: "開啟霸凌事件檢核系統",
+        url: "https://smallcannon-arch.github.io/bully-checkdesk/",
+        legalStatus: "externalCheckdesk"
+      }
+    ];
+
+    const RISK_FILTERS = [
+      { id: "all", label: "全部", steps: null },
+      { id: "s000", label: "S000 分流", steps: ["S000", "S003"] },
+      { id: "s004", label: "S004 期限", steps: ["S001", "S004", "S006", "S012"] },
+      { id: "s007", label: "S007 組成", steps: ["S007", "S008", "S010"] },
+      { id: "s011", label: "S011 評議", steps: ["S009", "S010", "S011"] },
+      { id: "s012", label: "S012 決定書", steps: ["S011", "S012"] },
+      { id: "s013", label: "S013 送達", steps: ["S012", "S013"] }
+    ];
+
+    const DEADLINE_RULES = [
+      {
+        id: "D001",
+        title: "高中申訴提出期限",
+        audience: "高級中等學校",
+        rule: "收受或知悉原措施次日起 30 日內。",
+        reminder: "只做期限文字提醒；是否逾期仍由承辦人依卷證與送達資料人工判斷。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D002",
+        title: "國中小申訴提出期限",
+        audience: "國民中小學",
+        rule: "收受或知悉原措施次日起 40 日內。",
+        reminder: "請先確認學制與適用規範，再檢核起算日。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D003",
+        title: "高中再申訴提出期限",
+        audience: "高級中等學校",
+        rule: "評議決定書達到次日起 30 日內。",
+        reminder: "達到日期與送達證明須可追溯。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D004",
+        title: "國中小再申訴提出期限",
+        audience: "國民中小學",
+        rule: "申訴評議書達到次日起 40 日內。",
+        reminder: "請同步檢核再申訴權利告知是否正確。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D005",
+        title: "申訴補正期限",
+        audience: "一般申訴",
+        rule: "7 日內。",
+        reminder: "補正通知應列明補正事項、期限與逾期效果。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D006",
+        title: "再申訴補正期限",
+        audience: "再申訴",
+        rule: "20 日內。",
+        reminder: "補正與送達紀錄應併入卷宗。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D007",
+        title: "申訴評議決定期限",
+        audience: "一般申訴",
+        rule: "收受申訴書次日起 30 日內，評議決定次日起 10 日內作成評議決定書。",
+        reminder: "本頁不做正式日期計算；請承辦人以收文與會議紀錄人工控管。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D008",
+        title: "再申訴評議決定期限",
+        audience: "再申訴",
+        rule: "收受再申訴書次日起 2 個月內，評議決定次日起 10 日內作成再申訴評議決定書。",
+        reminder: "主管機關或受理單位仍應依正式規範確認。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D009",
+        title: "再申訴評議決定書送達",
+        audience: "再申訴",
+        rule: "作成後 15 日內送達。",
+        reminder: "送達證明是期限起算與後續救濟的重要依據。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D010",
+        title: "不可抗力或不可歸責事由",
+        audience: "申訴與再申訴",
+        rule: "原因消滅後 20 日內，以書面申請並提出具體證明。",
+        reminder: "請保留原因消滅日期、申請書與證明文件。",
+        legalStatus: "verified"
+      },
+      {
+        id: "D011",
+        title: "期間末日遇例假日或星期六",
+        audience: "期間計算提醒",
+        rule: "依行政程序法第48條提示順延，先做文字提醒，不做計算器。",
+        reminder: "實際到期日由承辦人依正式行事曆與法規人工確認。",
+        legalStatus: "needsReview"
+      }
+    ];
+
+    const COMMITTEE_RULES = {
+      seniorHigh: {
+        title: "高中申評會組成檢核",
+        legalStatus: "verified",
+        items: [
+          "委員 7 至 15 人。",
+          "包含學校行政人員代表、教師代表、家長會代表。",
+          "學生代表至少 1 人。",
+          "校外法律、教育、兒少權利、心理或輔導專家學者至少 1 人。",
+          "任一性別不得少於三分之一。",
+          "委員任期一年。",
+          "學生獎懲委員會委員不得兼任同校申評會委員。",
+          "出席門檻 2/3，全體出席委員過半數同意。",
+          "評議決定採無記名投票。"
+        ]
+      },
+      juniorElementary: {
+        title: "國中小申評會組成檢核",
+        legalStatus: "verified",
+        items: [
+          "委員 5 至 15 人。",
+          "家長代表不得少於委員總數五分之一。",
+          "包含學校行政人員代表、教師代表。",
+          "法律、教育、兒少權利、心理或輔導專家學者至少 1 人。",
+          "校長得聘學生代表，但非強制。",
+          "任一性別不得少於三分之一。",
+          "委員任期一年。",
+          "學校學生管教懲處相關委員會委員不得兼任同校國中小申評會委員。",
+          "出席門檻 2/3，全體出席委員過半數同意。",
+          "評議決定採無記名投票。"
+        ]
+      },
+      specialEducationOverlay: {
+        title: "特教學生申訴疊加規則",
+        level: "high",
+        legalStatus: "verified",
+        items: [
+          "先由承辦人手動確認是否為特殊教育學生，不連動或整合任何真實學生資料。",
+          "先判斷是「鑑定、安置、輔導及支持服務爭議」或「學校懲處、其他措施或決議爭議」。",
+          "鑑定、安置、輔導及支持服務爭議由主管機關鑑安輔申評會處理。",
+          "特殊教育學校以外之高級中等以下學校處理特教學生申訴或再申訴時，應增聘至少 2 名與特殊教育需求相關之校外特殊教育學者專家、特殊教育家長團體代表或其他特殊教育專業人員。",
+          "增聘委員均出席，始得開會。"
+        ]
+      },
+      reAppeal: {
+        title: "再申訴程序提示",
+        legalStatus: "needsReview",
+        items: [
+          "再申訴受理、補正、評議與送達期限應與 DEADLINE_RULES 交叉檢核。",
+          "再申訴權利告知單應載明期限、受理機關與提出方式。",
+          "再申訴評議決定書作成與送達期限須分開控管。",
+          "主管機關或地方規範可能另有表件格式與流程，需人工確認。"
+        ]
+      }
+    };
+
+    const ROUTE_FLAGS = [
+      {
+        id: "RF001",
+        title: "疑似校園性別事件",
+        trigger: "申訴內容出現校園性別事件線索。",
+        action: "依一般學生申訴辦法第8條先做分流提示；本系統不收錄該專法細部條文，請改用性平事件檢核系統。",
+        legalStatus: "externalCheckdesk"
+      },
+      {
+        id: "RF002",
+        title: "疑似校園霸凌事件",
+        trigger: "申訴內容出現校園霸凌事件線索。",
+        action: "依一般學生申訴辦法第8條先做分流提示；本系統不收錄該專法細部條文，請改用霸凌事件檢核系統。",
+        legalStatus: "externalCheckdesk"
+      },
+      {
+        id: "RF003",
+        title: "特殊教育學生鑑安輔爭議",
+        trigger: "爭議核心為鑑定、安置、輔導或支持服務。",
+        action: "轉主管機關鑑安輔申評會。",
+        legalStatus: "verified"
+      },
+      {
+        id: "RF004",
+        title: "特殊教育學生一般懲處／措施爭議",
+        trigger: "爭議核心為學校懲處、其他措施或決議。",
+        action: "留在學校申評會，但套用 specialEducationOverlay。",
+        legalStatus: "verified"
+      },
+      {
+        id: "RF005",
+        title: "教師不當管教或體罰",
+        trigger: "申訴內容涉及教師不當管教、體罰或權責人員處置。",
+        action: "可能需另循教師法或校事會議處理，法源與管轄需人工確認。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "RF006",
+        title: "兒少保護或脆弱家庭",
+        trigger: "申訴內容涉及兒少保護、照顧疏忽、家庭暴力、脆弱家庭或立即安全疑慮。",
+        action: "可能需同步通報；通報義務與本申訴程序應分開檢核。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "RF007",
+        title: "一般申訴可能標的",
+        trigger: "成績、獎懲、轉班、轉學、安置、輔導措施等爭議。",
+        action: "先列為一般申訴可能標的，再視個案是否進專法分流。",
+        legalStatus: "localRuleNeeded"
+      }
+    ];
+
+    const DOCUMENT_REFS = [
+      {
+        id: "DOC001",
+        title: "學生申訴書",
+        usedInSteps: ["S001", "S002", "S006"],
+        timing: "收件與受理判斷前。",
+        requiredFields: ["申訴人與代理資料", "原措施或爭議事項", "申訴理由", "收受或知悉日期", "簽名或確認方式"],
+        riskNote: "未載明收受或知悉日期時，期限起算容易爭議。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC002",
+        title: "委任書",
+        usedInSteps: ["S001", "S002", "S005"],
+        timing: "由代理人或受任人提出時。",
+        requiredFields: ["委任人", "受任人", "委任範圍", "日期", "簽名或蓋章"],
+        riskNote: "代理權不明時應補正，避免通知或送達對象錯誤。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC003",
+        title: "補正通知書",
+        usedInSteps: ["S005", "S006"],
+        timing: "資料缺漏或形式要件不足時。",
+        requiredFields: ["需補正事項", "補正期限", "逾期效果", "承辦窗口", "送達紀錄"],
+        riskNote: "補正事項應具體，不宜要求申訴人整份重寫。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC004",
+        title: "受理通知書",
+        usedInSteps: ["S006", "S007"],
+        timing: "決定受理後。",
+        requiredFields: ["受理案由", "審議範圍", "後續程序", "承辦窗口"],
+        riskNote: "可列為建議表件；是否為必備表件需依地方或校內規範確認。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "DOC005",
+        title: "不受理評議決定書",
+        usedInSteps: ["S006", "S011", "S012"],
+        timing: "決定不受理時。",
+        requiredFields: ["主文", "不受理理由", "依據", "救濟途徑", "送達對象"],
+        riskNote: "不可只用口頭通知，且理由不能以實體勝敗取代形式判斷。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC006",
+        title: "申評會開會通知",
+        usedInSteps: ["S007", "S010"],
+        timing: "召開申評會前。",
+        requiredFields: ["會議時間", "地點", "案由", "出席或列席對象", "資料閱覽方式"],
+        riskNote: "通知不足可能影響委員準備與當事人程序保障。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC007",
+        title: "委員迴避聲明",
+        usedInSteps: ["S007", "S008", "S010"],
+        timing: "審議前及會議開始時。",
+        requiredFields: ["委員姓名", "是否有迴避事由", "聲明日期", "處理結果"],
+        riskNote: "迴避未處理是申評會組成與決議合法性的高風險點。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC008",
+        title: "陳述意見通知",
+        usedInSteps: ["S009", "S010"],
+        timing: "審議前或需補充說明時。",
+        requiredFields: ["陳述對象", "陳述方式", "期限或時間", "待說明事項", "送達紀錄"],
+        riskNote: "未給申訴人或原措施單位說明機會，可能造成程序瑕疵。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC009",
+        title: "調查紀錄",
+        usedInSteps: ["S009", "S010"],
+        timing: "需釐清事實或調閱補充資料時。",
+        requiredFields: ["調查目的", "資料來源", "訪談或調閱日期", "摘要", "保密處理"],
+        riskNote: "此為內部紀錄表件；是否採用與格式需人工確認。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "DOC010",
+        title: "申評會會議紀錄",
+        usedInSteps: ["S010", "S011"],
+        timing: "申評會議當日及會後整理。",
+        requiredFields: ["出席情形", "迴避處理", "討論摘要", "表決方式", "決議內容"],
+        riskNote: "未記載出席門檻、表決與理由，會削弱評議決定可稽核性。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC011",
+        title: "評議決定書",
+        usedInSteps: ["S011", "S012", "S013"],
+        timing: "評議決定後作成並送達。",
+        requiredFields: ["主文", "事實", "理由", "依據", "救濟途徑", "送達對象"],
+        riskNote: "本工具只提醒欄位，不產出正式決定書。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC012",
+        title: "送達證明",
+        usedInSteps: ["S005", "S006", "S012", "S013", "S014"],
+        timing: "各類通知或決定書送達時。",
+        requiredFields: ["送達文件", "送達對象", "送達方式", "送達日期", "簽收或證明資料"],
+        riskNote: "送達日期無紀錄會影響申訴、再申訴與後續救濟期限起算。",
+        legalStatus: "verified"
+      },
+      {
+        id: "DOC013",
+        title: "再申訴權利告知單",
+        usedInSteps: ["S011", "S012"],
+        timing: "評議決定書送達時併同提醒。",
+        requiredFields: ["再申訴期限", "受理機關", "提出方式", "應備文件", "期間起算提醒"],
+        riskNote: "漏告知或告知錯誤會影響學生後續救濟權益。",
+        legalStatus: "verified"
+      }
+    ];
+
+    const RISK_RULES = [
+      {
+        id: "R001",
+        level: "high",
+        title: "將性平事件誤用一般學生申訴處理",
+        steps: ["S003", "S006", "S009"],
+        scenario: "申訴內容已有校園性別事件線索，卻只用一般申訴評議程序處理。",
+        legalRefs: ["一般學生申訴辦法第8條分流提示"],
+        prevention: "先標記疑似校園性別事件分流；本系統不收錄該專法細部條文，改用外部性平檢核工具。",
+        legalStatus: "sourcePending"
+      },
+      {
+        id: "R002",
+        level: "high",
+        title: "將霸凌事件誤用一般學生申訴處理",
+        steps: ["S003", "S006", "S009"],
+        scenario: "申訴內容已有校園霸凌事件線索，卻未啟動分流檢核。",
+        legalRefs: ["一般學生申訴辦法第8條分流提示"],
+        prevention: "先標記疑似校園霸凌事件分流；本系統不收錄該專法細部條文，改用外部霸凌檢核工具。",
+        legalStatus: "sourcePending"
+      },
+      {
+        id: "R003",
+        level: "high",
+        title: "特教學生案件未查核特殊教育申訴規範",
+        steps: ["S003", "S007", "S010"],
+        scenario: "承辦人未手動確認是否為特殊教育學生，導致未套用特教疊加規則。",
+        legalRefs: ["specialEducationOverlay"],
+        prevention: "收件與分流時手動確認特教身分與爭議類型；需要時增聘特教相關委員。",
+        legalStatus: "verified"
+      },
+      {
+        id: "R004",
+        level: "high",
+        title: "申評會組成不合法",
+        steps: ["S007", "S010"],
+        scenario: "委員人數、代表類別、性別比例、外部專家或特教增聘委員未符合規則。",
+        legalRefs: ["COMMITTEE_RULES"],
+        prevention: "開會前用高中、國中小與特教疊加規則逐項檢核，並留存名冊。",
+        legalStatus: "verified"
+      },
+      {
+        id: "R005",
+        level: "high",
+        title: "應迴避委員未迴避",
+        steps: ["S008", "S010"],
+        scenario: "曾參與原措施、管教懲處或與當事人有利害關係者仍參與評議。",
+        legalRefs: ["迴避規範 placeholder"],
+        prevention: "會前收取迴避聲明，會議紀錄載明迴避處理。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "R006",
+        level: "medium",
+        title: "未給申訴人陳述意見機會",
+        steps: ["S009", "S010"],
+        scenario: "申評會只讀原措施資料，未通知申訴人補充或陳述。",
+        legalRefs: ["陳述意見規範 placeholder"],
+        prevention: "使用陳述意見通知，保存送達與陳述紀錄。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "R007",
+        level: "medium",
+        title: "申訴期限起算錯誤",
+        steps: ["S001", "S006", "S012"],
+        scenario: "以處分作成日取代收受或知悉日，或未區分高中、國中小期限。",
+        legalRefs: ["DEADLINE_RULES"],
+        prevention: "以送達證明、知悉紀錄與學制分流人工判斷，不做自動計算。",
+        legalStatus: "verified"
+      },
+      {
+        id: "R008",
+        level: "medium",
+        title: "評議決定書未告知救濟途徑",
+        steps: ["S011", "S012"],
+        scenario: "決定書只寫結果，未載明再申訴或其他救濟期限、機關與方式。",
+        legalRefs: ["再申訴權利告知 placeholder"],
+        prevention: "評議決定書與再申訴權利告知單一併檢核。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "R009",
+        level: "medium",
+        title: "送達對象錯誤或送達日期無紀錄",
+        steps: ["S005", "S006", "S012"],
+        scenario: "漏通知法定代理人、原措施單位，或無法證明送達日期。",
+        legalRefs: ["送達規範 placeholder"],
+        prevention: "建立送達清單與送達證明，送達後回填卷宗目錄。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "R010",
+        level: "medium",
+        title: "未給原措施單位說明或答辯機會",
+        steps: ["S009", "S010"],
+        scenario: "申評會未向原措施單位調閱資料或通知說明，導致事實基礎不足。",
+        legalRefs: ["申評程序 placeholder"],
+        prevention: "資料調閱清單列入原措施單位說明，必要時安排書面答辯。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "R011",
+        level: "medium",
+        title: "評議決定書未載明理由",
+        steps: ["S011", "S012"],
+        scenario: "決定書只有主文，未對主要申訴理由逐項回應。",
+        legalRefs: ["理由提示規範 placeholder"],
+        prevention: "草擬時檢核主文、事實、理由、依據與救濟欄位。",
+        legalStatus: "needsReview"
+      },
+      {
+        id: "R012",
+        level: "medium",
+        title: "涉及個資或隱私資料時揭露過度",
+        steps: ["S000", "S008", "S009", "S014"],
+        scenario: "卷證或會議資料未遮蔽第三人、健康、家庭或輔導資訊。",
+        legalRefs: ["個人資料保護規範 placeholder"],
+        prevention: "採最小必要揭露、遮蔽敏感欄位，並記錄閱覽與回收。",
+        legalStatus: "needsReview"
+      }
+    ];
+
+    const STEPS = [
+      {
+        code: "S000",
+        title: "適用範圍與專法分流",
+        meta: "一般申訴、專法、程序邊界",
+        summary: "先判斷是否適用一般學生申訴，或應轉入性平、霸凌、特教、兒少保護等程序。",
+        goal: "確認本案是否可進入一般學生申訴流程；若涉及專法或外部程序，先完成分流與必要通報檢核。",
+        checks: [
+          "先確認爭議是否屬學生對學校措施、懲處、輔導或其他權益事項之申訴。",
+          "檢核是否出現性平、霸凌、特教鑑安輔、兒少保護或教師不當管教等專法分流訊號。",
+          "若仍留在一般申訴，標註適用學制、原措施單位、收受或知悉日期與申訴標的。",
+          "使用本頁時不輸入個案資料；正式卷宗仍由校內紙本或正式系統管理。"
+        ],
+        deadline: "每次使用前完成。",
+        risks: [
+          "應走專法或主管機關程序的案件，被誤放入一般學生申訴流程。",
+          "未先確認學制、申訴標的與管轄，導致後續期限或組成規則套用錯誤。",
+          "把本頁 placeholder 或提醒文字當成正式法規依據。"
+        ],
+        documents: ["專法分流檢核表", "申訴標的初判紀錄", "校內正式卷宗"],
+        laws: [
+          { text: "一般學生申訴適用範圍", legalStatus: "needsReview" },
+          { text: "疑似校園性別事件分流", legalStatus: "externalCheckdesk" },
+          { text: "疑似校園霸凌事件分流", legalStatus: "externalCheckdesk" },
+          { text: "特殊教育學生申訴疊加規則", legalStatus: "verified" }
+        ],
+        next: ["可走一般申訴者，進入 S001 收件與初步安全判斷。", "疑似專法案件，先切到專法分流頁或對應外部檢核系統。"]
+      },
+      {
+        code: "S001",
+        title: "收件與初步安全判斷",
+        meta: "來源、收件時間、緊急風險",
+        summary: "確認學生、法定代理人或其他利害關係人提出事項已正式收件，並先辨識即時安全需求。",
+        goal: "把申訴或陳情資料納入正式行政流程，留下收件時間與來源紀錄。",
+        checks: [
+          "登錄收件日期、時間、方式、提出人身分與聯絡窗口。",
+          "區分正式申訴、陳情、詢問、補充資料或其他專法申請。",
+          "先檢核是否有自傷他傷、報復、校園安全、兒少保護或媒體關注風險。",
+          "指定單一承辦窗口，避免多頭聯繫造成資訊落差。"
+        ],
+        deadline: "收件當日完成初步登錄與安全判斷。",
+        risks: [
+          "只以口頭方式收件，未留下正式日期與內容紀錄。",
+          "把緊急保護事項留待申訴評議後才處理。",
+          "承辦人先行對申訴有無理由作實體判斷。"
+        ],
+        documents: ["申訴書或收件紀錄", "初步安全評估紀錄", "承辦窗口指派紀錄"],
+        laws: ["法規索引待補：學生申訴提出方式", "兒少保護通報 placeholder", "校安通報 placeholder"],
+        next: ["資料完整者進入 S002。", "資料不明但有安全風險者，同步啟動保護與通報檢核。"]
+      },
+      {
+        code: "S002",
+        title: "申訴標的與身分確認",
+        meta: "誰申訴、對何行政措施",
+        summary: "確認提出人資格、相對行政措施或事實，以及是否屬學生申訴制度處理範圍。",
+        goal: "釐清案件是否具備學生申訴的基本要素，作為後續受理、補正或分流依據。",
+        checks: [
+          "確認申訴人是否為學生、法定代理人、實際照顧者或依法得代為提出者。",
+          "整理申訴標的：懲處、輔導管教措施、學習權益、校內處分、作為或不作為。",
+          "確認相對單位與原處理單位，避免由同一人同時承辦原處分與申訴評議。",
+          "標註是否已提出其他救濟、陳情、性平、霸凌或特教程序。"
+        ],
+        deadline: "收件後儘速完成；需補正者進入 S005。",
+        risks: [
+          "未確認提出人資格就直接排入評議。",
+          "沒有界定申訴標的，導致審議範圍漂移。",
+          "同一行政人員同時參與原處理與救濟審議，產生公正疑慮。"
+        ],
+        documents: ["申訴標的整理表", "提出人身分確認紀錄", "原處理資料清單"],
+        laws: ["法規索引待補：申訴人資格", "法規索引待補：申訴標的", "行政程序法迴避 placeholder"],
+        next: ["屬學生申訴者進入 S003。", "明顯屬其他程序者，先作成分流紀錄。"]
+      },
+      {
+        code: "S003",
+        title: "專法分流初判",
+        meta: "性平、霸凌、特教、兒保",
+        summary: "在申訴受理判斷前，先確認是否另有優先或併行程序。",
+        goal: "避免用一般學生申訴流程取代法定通報、調查或特殊支持程序。",
+        checks: [
+          "逐項檢核專法分流卡四類情形，必要時洽主管或法制窗口確認。",
+          "性平或霸凌線索不因申訴人用語不同而忽略。",
+          "特教學生或疑似特殊需求者，確認是否需要程序協助、溝通支持或合理調整。",
+          "兒少保護與立即安全事項優先處理，並保留分流紀錄。"
+        ],
+        deadline: "受理判斷前完成；審議期間發現新事證時再檢核。",
+        risks: [
+          "把性平、霸凌或兒保事項包進申訴審議，導致專法程序逾期。",
+          "只因申訴書未寫明關鍵字就未分流。",
+          "未替特教學生提供必要程序協助。"
+        ],
+        documents: ["專法分流檢核表", "通報或移送紀錄", "程序協助紀錄"],
+        laws: [
+          { text: "疑似校園性別事件分流", legalStatus: "externalCheckdesk" },
+          { text: "疑似校園霸凌事件分流", legalStatus: "externalCheckdesk" },
+          { text: "特殊教育學生申訴疊加規則", legalStatus: "verified" },
+          { text: "兒少保護或脆弱家庭同步通報", legalStatus: "needsReview" }
+        ],
+        next: ["無專法優先事項者進入 S004。", "有分流事項者，併行或移轉至對應程序，並回到申訴範圍確認。"]
+      },
+      {
+        code: "S004",
+        title: "期限與管轄檢核",
+        meta: "申訴期間、本校權責、移送",
+        summary: "確認收受或知悉日期、適用學制期限，以及本校或學生申訴評議組織是否有處理權限。",
+        goal: "先把期限起算資料與管轄權責釐清，避免逾期、誤用學制期限或無管轄仍進入實體審查。",
+        checks: [
+          "確認申訴人收受或知悉原措施的日期，並標註高中或國中小適用期限。",
+          "確認申訴標的是否由本校作成，或是否屬本校應處理之學生權益事項。",
+          "涉及他校、跨校活動、實習場域、校外機構或主管機關處分者，標註權責關係與移送需求。",
+          "若非本校權責，準備移送、轉知或回覆不受理理由。",
+          "保留期限判斷、移送日期、移送對象與通知紀錄。"
+        ],
+        deadline: "受理或不受理通知前完成。",
+        risks: [
+          "本校無權責卻進入評議，後續決定可能無效或難以執行。",
+          "移送後未通知申訴人。",
+          "跨單位案件未確認資料提供與保密邊界。"
+        ],
+        documents: ["管轄判斷紀錄", "移送或轉知函稿", "通知申訴人紀錄"],
+        laws: ["法規索引待補：申訴管轄", "行政程序法管轄 placeholder", "校內權責分工 placeholder"],
+        next: ["本校有權責者進入 S005。", "無權責者作成移送或不受理紀錄，並確認是否仍有校內保護義務。"]
+      },
+      {
+        code: "S005",
+        title: "補正與程序告知",
+        meta: "資料缺漏、期限、權利義務",
+        summary: "對資料缺漏、標的不明或代理權不足者，通知補正並清楚告知程序權利。",
+        goal: "讓申訴人有合理機會補足必要資料，同時保留期限與送達紀錄。",
+        checks: [
+          "列明需補正項目，不以籠統文字要求全部重寫。",
+          "告知補正期限、逾期效果、聯絡窗口與可協助事項。",
+          "涉及未成年學生時，確認法定代理人、實際照顧者或學生本人意願的處理方式。",
+          "補正後重新檢核 S002 至 S004。"
+        ],
+        deadline: "依校內規定或通知所載期限控管。",
+        risks: [
+          "未給予補正機會即逕予不受理。",
+          "補正通知未送達或未保存證明。",
+          "補正要求超出判斷受理所需範圍。"
+        ],
+        documents: ["補正通知", "送達證明", "補正資料收件紀錄"],
+        laws: ["法規索引待補：補正程序", "行政程序法送達 placeholder", "校內學生申訴規定 placeholder"],
+        next: ["補正完成者進入 S006。", "逾期未補正者，回到 S006 檢核不受理通知內容。"]
+      },
+      {
+        code: "S006",
+        title: "受理或不受理判斷",
+        meta: "形式審查、理由、通知",
+        summary: "依申訴資格、標的、期限、管轄與補正結果，作成受理或不受理程序決定。",
+        goal: "在實體審議前完成可受理性判斷，並用書面留下理由。",
+        checks: [
+          "檢核是否逾申訴期間、非申訴標的、非適格提出人、無管轄或已重複救濟。",
+          "受理時確認審議範圍與資料清單。",
+          "不受理時列明具體理由、依據與後續可行救濟或補充方式。",
+          "通知申訴人及必要關係人，保存送達或通知紀錄。"
+        ],
+        deadline: "依學生申訴法規與校內規定期限辦理；placeholder 待正式索引。",
+        risks: [
+          "以實體上不會成立作為不受理理由。",
+          "不受理未載明具體理由或救濟資訊。",
+          "未控管期限，造成程序遲延。"
+        ],
+        documents: ["受理通知", "不受理通知", "形式審查表", "送達紀錄"],
+        laws: ["法規索引待補：受理期限", "法規索引待補：不受理事由", "行政程序法理由提示 placeholder"],
+        next: ["受理者進入 S007。", "不受理者進入 S012 送達與救濟告知檢核。"]
+      },
+      {
+        code: "S007",
+        title: "組成申訴評議組織",
+        meta: "委員、比例、外部或學生代表",
+        summary: "依校內規定確認學生申訴評議委員會或評議小組組成、出席與專業需求。",
+        goal: "確保評議組織具合法組成與審議能力，必要時納入外部、家長、學生或專業人員。",
+        checks: [
+          "確認委員名冊、任期、性別比例、學生或家長代表規定是否符合校內制度。",
+          "案件涉及特教、性平、霸凌、兒保或身心健康時，評估是否需專業諮詢。",
+          "確認召集人、紀錄人員、列席人員與保密義務。",
+          "會議通知應載明時間、地點、案由與資料閱讀方式。"
+        ],
+        deadline: "受理後儘速完成並排定會議。",
+        risks: [
+          "委員任期或組成不符校內規定。",
+          "評議組織成員與原處理單位高度重疊。",
+          "未提供委員足夠資料卻要求即席決議。"
+        ],
+        documents: ["委員名冊", "開會通知", "保密義務告知", "專業諮詢紀錄"],
+        laws: ["法規索引待補：申訴評議組織", "校內組織章則 placeholder", "利益迴避 placeholder"],
+        next: ["組成確認後進入 S008。", "組成有疑義者，先補正委員或洽主管機關確認。"]
+      },
+      {
+        code: "S008",
+        title: "利益迴避與保密控管",
+        meta: "迴避、閱卷、個資",
+        summary: "在審議前確認委員、承辦人與列席者是否需迴避，並控管資料接觸範圍。",
+        goal: "維持評議公正性與個資保護，避免程序瑕疵。",
+        checks: [
+          "請委員檢核是否曾參與原處理、輔導、調查、懲處或與當事人有利害關係。",
+          "建立資料閱覽、影印、電子檔傳送與回收規則。",
+          "對列席人、紀錄人與提供資料者說明保密義務。",
+          "必要時作成迴避決定或更換委員。"
+        ],
+        deadline: "第一次審議會議前完成；審議中發現新事由時即時處理。",
+        risks: [
+          "原處分承辦人參與申訴評議表決。",
+          "將完整個資或敏感資料提供給非必要人員。",
+          "迴避爭議未記載於會議紀錄。"
+        ],
+        documents: ["迴避檢核表", "保密切結或告知", "資料閱覽紀錄", "迴避決定紀錄"],
+        laws: ["行政程序法迴避 placeholder", "個人資料保護法 placeholder", "校內申訴評議規定 placeholder"],
+        next: ["迴避與保密確認後進入 S009。", "有迴避爭議者，先處理組成合法性再審議。"]
+      },
+      {
+        code: "S009",
+        title: "資料調閱與陳述機會",
+        meta: "卷證、說明、意見",
+        summary: "蒐集原處理資料、申訴理由、相關說明與必要證據，並提供當事人陳述意見機會。",
+        goal: "讓評議建立在完整、可追溯且雙方可回應的資料基礎上。",
+        checks: [
+          "向原處理單位調閱處分或措施依據、事實資料、會議紀錄與通知文件。",
+          "整理申訴理由、補充資料、爭點與待釐清事項。",
+          "安排書面或口頭陳述機會，並保存通知與紀錄。",
+          "涉及敏感資料時，提供摘要、遮蔽或限制閱覽方式。"
+        ],
+        deadline: "審議期間完成，並保留當事人合理準備時間。",
+        risks: [
+          "只聽取原處理單位說明，未給申訴人陳述機會。",
+          "未確認原處分資料是否完整。",
+          "提供卷證時未遮蔽第三人或敏感個資。"
+        ],
+        documents: ["資料調閱清單", "陳述意見通知", "陳述紀錄", "卷證遮蔽紀錄"],
+        laws: ["法規索引待補：陳述意見", "行政程序法閱覽卷宗 placeholder", "個資遮蔽 placeholder"],
+        next: ["資料與陳述完成後進入 S010。", "發現專法線索者回到 S003 更新分流。"]
+      },
+      {
+        code: "S010",
+        title: "會議審議與評議紀錄",
+        meta: "出席、討論、表決",
+        summary: "召開申訴評議會議，依爭點逐項審查程序、事實、理由與處理建議。",
+        goal: "形成可被檢驗的評議過程與結論，確保出席、表決與紀錄符合規定。",
+        checks: [
+          "確認開會通知、出席人數、迴避、列席與表決門檻。",
+          "依爭點檢視原處理程序是否合法、事實是否有資料支持、裁量是否適當。",
+          "逐項記載討論重點、補充資料、委員意見與表決結果。",
+          "決議應明確區分維持、撤銷、變更、發回或其他處理方式。"
+        ],
+        deadline: "會議當日完成核心紀錄，會後儘速整理確認。",
+        risks: [
+          "會議紀錄只有結論，沒有理由與表決情形。",
+          "未處理委員迴避或出席門檻問題。",
+          "決議內容不明確，後續單位無法執行。"
+        ],
+        documents: ["會議議程", "簽到表", "評議會議紀錄", "表決紀錄"],
+        laws: ["法規索引待補：評議會議程序", "校內會議規則 placeholder", "行政程序理由提示 placeholder"],
+        next: ["形成決議後進入 S011。", "資料不足需補查者，回到 S009 並控管期限。"]
+      },
+      {
+        code: "S011",
+        title: "評議決定書草擬",
+        meta: "主文、事實、理由、救濟",
+        summary: "將評議結果整理為正式書面，載明主文、事實、理由、依據與後續救濟資訊。",
+        goal: "提醒評議決定書應檢核的主文、事實、理由、依據與救濟欄位；本工具不產出正式決定書。",
+        checks: [
+          "主文清楚寫明維持、撤銷、變更、發回重處或其他處理。",
+          "事實欄整理不爭執事項、爭點與採認資料。",
+          "理由欄對申訴理由逐項回應，避免只寫概括結論。",
+          "檢核救濟途徑、期限、受理機關與送達對象。"
+        ],
+        deadline: "決議後依校內規定期限完成；placeholder 待正式索引。",
+        risks: [
+          "決定書未回應主要申訴理由。",
+          "主文與理由不一致。",
+          "救濟資訊錯誤或漏列，影響當事人權益。"
+        ],
+        documents: ["評議決定書", "附件清單", "救濟告知文字", "核稿紀錄"],
+        laws: ["法規索引待補：評議決定書應載事項", "行政程序法書面處分 placeholder", "學生救濟制度 placeholder"],
+        next: ["決定書確認後進入 S012。", "需原處理單位補充執行方式者，先取得書面意見。"]
+      },
+      {
+        code: "S012",
+        title: "評議決定書與救濟告知",
+        meta: "通知、送達、期限起算",
+        summary: "將受理、不受理或評議決定依法通知相關人員，並確認送達方式與救濟期間起算。",
+        goal: "確保程序結果有效送達，並讓當事人清楚知道後續救濟方式。",
+        checks: [
+          "確認送達對象：學生、法定代理人、原處理單位及其他依法需通知者。",
+          "送達文件包含主文、理由、依據、救濟途徑、期限與受理機關。",
+          "保存郵寄、電子、公文或親領送達證明。",
+          "對未成年或特教學生，確認文字是否可理解並提供必要說明。"
+        ],
+        deadline: "作成決定後依法或依校內規定期限送達；placeholder 待正式索引。",
+        risks: [
+          "只口頭告知結果，未完成正式送達。",
+          "救濟期間起算依據不明。",
+          "漏通知法定代理人或原處理單位。"
+        ],
+        documents: ["送達清單", "郵寄或簽收證明", "電子通知紀錄", "救濟告知附件"],
+        laws: ["法規索引待補：送達與通知", "行政程序法送達 placeholder", "學生再救濟 placeholder"],
+        next: ["評議結果需執行者進入 S013。", "不受理或程序終結者，進入 S014 做結案檢核。"]
+      },
+      {
+        code: "S013",
+        title: "執行追蹤與回復權益",
+        meta: "撤銷、變更、補救、追蹤",
+        summary: "確認評議結果由權責單位執行，並追蹤學生權益回復、紀錄更正或後續措施。",
+        goal: "讓評議結果落實，而不只是完成書面通知。",
+        checks: [
+          "將決定書送交原處理單位或權責單位辦理。",
+          "列明應執行事項、期限、負責人與回報方式。",
+          "涉及學籍、獎懲、成績、出缺勤、輔導或環境調整者，逐項確認完成。",
+          "必要時回報申訴評議組織或校長室追蹤。"
+        ],
+        deadline: "送達後依決定內容與校內規定追蹤。",
+        risks: [
+          "決定書已送達但權責單位未執行。",
+          "撤銷或變更後未同步更正學生紀錄。",
+          "補救措施影響第三人權益卻未通知或未規劃。"
+        ],
+        documents: ["執行分工表", "權益回復紀錄", "紀錄更正證明", "追蹤回報表"],
+        laws: ["法規索引待補：評議結果效力", "校內執行分工 placeholder", "學生資料更正 placeholder"],
+        next: ["執行完成後進入 S014。", "執行有困難者，回報評議組織或權責主管確認處理方式。"]
+      },
+      {
+        code: "S014",
+        title: "再申訴提醒",
+        meta: "救濟、卷宗、改善",
+        summary: "確認再申訴權利提醒後，再完成卷宗整理、去識別化回顧與制度改善建議。",
+        goal: "讓案件以可稽核、可保護個資、可回饋制度的方式結案。",
+        checks: [
+          "核對收件、補正、受理、會議、決定、送達、執行與追蹤文件是否完整。",
+          "依校內檔案保存規則整理紙本與電子卷宗。",
+          "去識別化整理常見爭點、流程遲延原因與制度改善建議。",
+          "若申訴反映校規、表單或行政流程問題，排入修正追蹤。"
+        ],
+        deadline: "結案後完成歸檔；制度改善依校內行政期程追蹤。",
+        risks: [
+          "卷宗散落在個人電腦、通訊軟體或非正式雲端資料夾。",
+          "為了教育訓練直接使用可識別個案資料。",
+          "未把反覆出現的申訴原因回饋到校內制度。"
+        ],
+        documents: ["結案檢核表", "卷宗目錄", "去識別化回顧紀錄", "制度改善追蹤表"],
+        laws: ["法規索引待補：檔案保存", "個人資料保護法 placeholder", "校內文書檔案規定 placeholder"],
+        next: ["完成本案查核。", "將需修正的校內規定、表單或流程列入下次會議。"]
+      }
+    ];
+
+    const FLOW_GROUPS = [
+      { title: "一、收件與分流", codes: ["S000", "S001", "S002", "S003"] },
+      { title: "二、受理前審查", codes: ["S004", "S005", "S006"] },
+      { title: "三、評議準備", codes: ["S007", "S008", "S009"] },
+      { title: "四、審議與決定", codes: ["S010", "S011", "S012"] },
+      { title: "五、執行與結案", codes: ["S013", "S014"] }
+    ];
+
+    const FIELD_CONFIG = [
+      { key: "goal", title: "本步驟目標", type: "paragraph", className: "full" },
+      { key: "checks", title: "承辦人先看這些", type: "list" },
+      { key: "risks", title: "本步驟最高風險", type: "highestRisk", className: "risk" },
+      { key: "next", title: "下一步分流", type: "next", className: "full" }
+    ];
+
+    const flowList = document.querySelector("#flowList");
+    const specialRoutes = document.querySelector("#specialRoutes");
+    const activeCode = document.querySelector("#activeCode");
+    const detailTitle = document.querySelector("#detailTitle");
+    const detailSummary = document.querySelector("#detailSummary");
+    const sectionGrid = document.querySelector("#sectionGrid");
+    const checkCard = document.querySelector("#checkCard");
+    const backToFlow = document.querySelector("#backToFlow");
+    const flowPanel = document.querySelector(".flow-panel");
+    const tabButtons = document.querySelectorAll(".primary-tab");
+    const tabPanels = document.querySelectorAll(".tab-panel");
+    const tabContext = document.querySelector("#tabContext");
+    const quickEntryGrid = document.querySelector("#quickEntryGrid");
+    const stepDocumentsEl = document.querySelector("#stepDocuments");
+    const stepLawsEl = document.querySelector("#stepLaws");
+    const deadlineRulesEl = document.querySelector("#deadlineRules");
+    const committeeRulesEl = document.querySelector("#committeeRules");
+    const riskRulesEl = document.querySelector("#riskRules");
+    const reAppealPanel = document.querySelector("#reAppealPanel");
+    const externalToolsEl = document.querySelector("#externalTools");
+    const committeePageEl = document.querySelector("#committeePage");
+    const documentCatalogEl = document.querySelector("#documentCatalog");
+    const riskFiltersEl = document.querySelector("#riskFilters");
+    const riskCatalogEl = document.querySelector("#riskCatalog");
+
+    const stepIndexByCode = new Map(STEPS.map((step, index) => [step.code, index]));
+
+    function getScrollOffset() {
+      const fallbackOffset = 120;
+      if (typeof getComputedStyle !== "function" || !document.documentElement) {
+        return fallbackOffset;
+      }
+
+      const cssOffset = getComputedStyle(document.documentElement).getPropertyValue("--scroll-offset");
+      const parsedOffset = Number.parseInt(cssOffset, 10);
+      return Number.isFinite(parsedOffset) ? parsedOffset : fallbackOffset;
+    }
+
+    function prefersReducedMotion() {
+      return typeof window.matchMedia === "function"
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function scrollToTarget(element, options = {}) {
+      if (!element || typeof element.getBoundingClientRect !== "function") {
+        return;
+      }
+
+      const offset = options.offset ?? getScrollOffset();
+      const currentY = window.scrollY || window.pageYOffset || 0;
+      const top = element.getBoundingClientRect().top + currentY - offset;
+
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior: prefersReducedMotion() ? "auto" : "smooth"
+      });
+    }
+
+    function focusTarget(element) {
+      if (!element || typeof element.focus !== "function") {
+        return;
+      }
+
+      if (typeof element.hasAttribute === "function" && !element.hasAttribute("tabindex")) {
+        element.setAttribute("tabindex", "-1");
+      }
+
+      try {
+        element.focus({ preventScroll: true });
+      } catch (error) {
+        element.focus();
+      }
+    }
+
+    function afterRender(callback) {
+      if (typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(callback);
+        });
+        return;
+      }
+
+      window.setTimeout(callback, 0);
+    }
+
+    function focusAndScroll(scrollTarget, focusElement = scrollTarget, options = {}) {
+      if (!scrollTarget) {
+        return;
+      }
+
+      afterRender(() => {
+        focusTarget(focusElement || scrollTarget);
+        scrollToTarget(scrollTarget, options);
+      });
+    }
+
+    function getStepPrimaryTarget() {
+      return document.querySelector("[data-step-primary-card]")
+        || document.querySelector(".step-primary-card")
+        || document.querySelector(".step-primary-header");
+    }
+
+    function getStepPrimaryFocusTarget() {
+      const target = getStepPrimaryTarget();
+      return target ? target.querySelector("h2") || detailTitle || target : detailTitle;
+    }
+
+    function getPanelByName(tabName) {
+      return Array.from(tabPanels).find((panel) => panel.dataset.panel === tabName) || null;
+    }
+
+    function getPanelScrollTarget(tabName) {
+      if (tabName === "general") {
+        return getStepPrimaryTarget();
+      }
+
+      const panel = getPanelByName(tabName);
+      return panel ? panel.querySelector(".page-head") || panel : null;
+    }
+
+    function getPanelFocusTarget(tabName) {
+      if (tabName === "general") {
+        return getStepPrimaryFocusTarget();
+      }
+
+      const target = getPanelScrollTarget(tabName);
+      return target ? target.querySelector("h2") || target : null;
+    }
+
+    function resolveNavigationTarget(tabName, stepCode, scrollTarget) {
+      if (scrollTarget === "stepPrimaryCard" || stepCode) {
+        return getStepPrimaryTarget();
+      }
+
+      return getPanelScrollTarget(tabName);
+    }
+
+    function resolveNavigationFocusTarget(tabName, stepCode, scrollTarget) {
+      if (scrollTarget === "stepPrimaryCard" || stepCode) {
+        return getStepPrimaryFocusTarget();
+      }
+
+      const target = resolveNavigationTarget(tabName, stepCode, scrollTarget);
+      return target ? target.querySelector("h2") || target : null;
+    }
+
+    function keepStepButtonVisible(button) {
+      if (button && typeof button.scrollIntoView === "function") {
+        button.scrollIntoView({
+          block: "nearest",
+          inline: "nearest"
+        });
+      }
+    }
+
+    function getStatusLabel(status) {
+      return LEGAL_STATUS_LABELS[status] || LEGAL_STATUS_LABELS.needsReview;
+    }
+
+    function makeStatusTag(status) {
+      const normalized = status || "needsReview";
+      return makeTextElement("span", `status-tag status-${normalized}`, getStatusLabel(normalized));
+    }
+
+    function normalizeLegalRef(ref) {
+      if (typeof ref === "object") {
+        return {
+          text: ref.text || ref.title || "",
+          legalStatus: ref.legalStatus || ref.status || "needsReview"
+        };
+      }
+
+      const text = String(ref);
+      if (text.includes("性別") || text.includes("性平") || text.includes("霸凌")) {
+        return { text, legalStatus: "sourcePending" };
+      }
+      if (text.includes("校內") || text.includes("地方")) {
+        return { text, legalStatus: "localRuleNeeded" };
+      }
+      if (text.includes("placeholder") || text.includes("待補")) {
+        return { text, legalStatus: "needsReview" };
+      }
+      return { text, legalStatus: "needsReview" };
+    }
+
+    function activateTab(tabName, options = {}) {
+      tabButtons.forEach((button) => {
+        const selected = button.dataset.tab === tabName;
+        button.setAttribute("aria-selected", selected ? "true" : "false");
+        button.tabIndex = selected ? 0 : -1;
+      });
+
+      tabPanels.forEach((panel) => {
+        panel.hidden = panel.dataset.panel !== tabName;
+      });
+
+      tabContext.textContent = TAB_DESCRIPTIONS[tabName] || TAB_DESCRIPTIONS.overview;
+
+      if (options.stepCode) {
+        renderStepByCode(options.stepCode, { keepStepVisible: true });
+      }
+
+      if (options.scroll !== false) {
+        const scrollTarget = resolveNavigationTarget(tabName, options.stepCode, options.scrollTarget);
+        const focusElement = resolveNavigationFocusTarget(tabName, options.stepCode, options.scrollTarget);
+        focusAndScroll(scrollTarget, focusElement);
+      }
+    }
+
+    function renderStepByCode(code, options = {}) {
+      const index = stepIndexByCode.get(code);
+      if (index !== undefined) {
+        renderStep(index, options);
+        return true;
+      }
+      return false;
+    }
+
+    function makeTextElement(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) {
+        element.className = className;
+      }
+      element.textContent = text;
+      return element;
+    }
+
+    function makeList(items, className) {
+      const list = document.createElement("ul");
+      list.className = className;
+      items.forEach((text) => {
+        list.appendChild(makeTextElement("li", "", text));
+      });
+      return list;
+    }
+
+    function makeChipList(items, chipClass) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "tag-list";
+      items.forEach((item) => {
+        if (chipClass === "law-chip") {
+          const ref = normalizeLegalRef(item);
+          const chip = makeTextElement("span", chipClass, ref.text);
+          chip.appendChild(makeStatusTag(ref.legalStatus));
+          wrapper.appendChild(chip);
+          return;
+        }
+
+        const text = typeof item === "object" ? item.title || item.text || "" : item;
+        wrapper.appendChild(makeTextElement("span", chipClass, text));
+      });
+      return wrapper;
+    }
+
+    function makeLinkedToolCard(tool, index) {
+      const card = document.createElement("article");
+      card.className = `external-tool-card${index === 1 ? " teal" : ""}`;
+
+      const head = document.createElement("div");
+      head.className = "assist-card-head";
+      head.append(
+        makeTextElement("h3", "", tool.title),
+        makeStatusTag(tool.legalStatus)
+      );
+
+      const link = document.createElement("a");
+      link.className = "external-link";
+      link.href = tool.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.setAttribute("aria-label", `${tool.buttonText}，另開新分頁`);
+      link.textContent = tool.buttonText;
+
+      card.append(
+        head,
+        makeTextElement("p", "", tool.description),
+        makeTextElement("p", "external-reminder", tool.reminder),
+        link
+      );
+      return card;
+    }
+
+    function makeDocumentRefs(step) {
+      const wrapper = document.createElement("div");
+      const refs = DOCUMENT_REFS.filter((doc) => doc.usedInSteps.includes(step.code));
+
+      if (refs.length > 0) {
+        const list = document.createElement("div");
+        list.className = "document-list";
+        refs.forEach((doc) => {
+          const item = document.createElement("details");
+          item.className = "document-ref";
+
+          const summary = document.createElement("summary");
+          summary.append(
+            makeTextElement("span", "", doc.title),
+            makeStatusTag(doc.legalStatus)
+          );
+
+          const body = document.createElement("div");
+          body.className = "document-body";
+          body.append(
+            makeTextElement("p", "document-meta", `使用時點：${doc.timing}`),
+            makeTextElement("p", "document-meta", `風險提醒：${doc.riskNote}`)
+          );
+
+          const fields = makeList(doc.requiredFields, "check-list");
+          body.appendChild(makeTextElement("p", "document-meta", "必要欄位提醒："));
+          body.appendChild(fields);
+
+          item.append(summary, body);
+          list.appendChild(item);
+        });
+        wrapper.appendChild(list);
+      }
+
+      if (step.documents && step.documents.length > 0) {
+        wrapper.appendChild(makeChipList(step.documents, "doc-chip"));
+      }
+
+      return wrapper;
+    }
+
+    function getHighestRisk(step) {
+      const related = RISK_RULES
+        .filter((risk) => risk.steps.includes(step.code) && risk.level === "high");
+
+      if (related.length > 0) {
+        return related[0];
+      }
+
+      return {
+        level: "low",
+        title: "本步驟暫無 high risk 標示，仍請依下方程序風險檢核。",
+        scenario: "請依本步驟承辦人先看這些與下方程序風險清單人工確認。",
+        prevention: "必要時展開程序風險區塊交叉檢核。"
+      };
+    }
+
+    function makeHighestRisk(step) {
+      const risk = getHighestRisk(step);
+      const wrapper = document.createElement("div");
+      wrapper.className = "assist-card";
+      const head = document.createElement("div");
+      head.className = "assist-card-head";
+      head.append(
+        makeTextElement("h4", "", risk.title),
+        makeTextElement("span", `risk-level ${risk.level}`, risk.level)
+      );
+      wrapper.append(
+        head,
+        makeTextElement("p", "", risk.scenario),
+        makeTextElement("p", "assist-meta", `預防：${risk.prevention}`)
+      );
+      return wrapper;
+    }
+
+    function makeSection(config, step) {
+      const section = document.createElement("section");
+      const classNames = ["check-section"];
+      if (config.className) {
+        classNames.push(config.className);
+      }
+      section.className = classNames.join(" ");
+
+      section.appendChild(makeTextElement("h3", "", config.title));
+
+      if (config.type === "paragraph") {
+        section.appendChild(makeTextElement("p", "", step[config.key]));
+      }
+
+      if (config.type === "list") {
+        section.appendChild(makeList(step[config.key], "check-list"));
+      }
+
+      if (config.type === "highestRisk") {
+        section.appendChild(makeHighestRisk(step));
+      }
+
+      if (config.type === "chips") {
+        section.appendChild(makeChipList(step[config.key], config.chipClass));
+      }
+
+      if (config.type === "documents") {
+        section.appendChild(makeDocumentRefs(step));
+      }
+
+      if (config.type === "next") {
+        const list = document.createElement("ul");
+        list.className = "next-actions";
+        step[config.key].forEach((text) => {
+          const item = document.createElement("li");
+          item.appendChild(makeTextElement("span", "branch-chip", text));
+          list.appendChild(item);
+        });
+        section.appendChild(list);
+      }
+
+      return section;
+    }
+
+    function renderStep(index, options = {}) {
+      const step = STEPS[index];
+      activeCode.textContent = step.code;
+      detailTitle.textContent = step.title;
+      detailSummary.textContent = step.summary;
+
+      let activeStepButton = null;
+      document.querySelectorAll(".step-button").forEach((button) => {
+        const selected = button.dataset.index === String(index);
+        button.setAttribute("aria-current", selected ? "true" : "false");
+        button.className = selected ? "step-button is-active" : "step-button";
+        if (selected) {
+          activeStepButton = button;
+        }
+      });
+
+      sectionGrid.replaceChildren(...FIELD_CONFIG.map((config) => makeSection(config, step)));
+      stepDocumentsEl.replaceChildren(makeDocumentRefs(step));
+      stepLawsEl.replaceChildren(makeChipList(step.laws || [], "law-chip"));
+
+      if (options.keepStepVisible !== false) {
+        keepStepButtonVisible(activeStepButton);
+      }
+
+      if (options.scrollMain) {
+        const scrollTarget = resolveNavigationTarget("general", step.code, "stepPrimaryCard");
+        const focusElement = resolveNavigationFocusTarget("general", step.code, "stepPrimaryCard");
+        focusAndScroll(scrollTarget, focusElement);
+      }
+    }
+
+    function makeStepButton(step, index) {
+      const button = document.createElement("button");
+      button.className = `step-button${index === 0 ? " is-active" : ""}`;
+      button.type = "button";
+      button.dataset.index = String(index);
+      button.setAttribute("aria-current", index === 0 ? "true" : "false");
+
+      button.append(
+        makeTextElement("span", "step-code", step.code),
+        makeTextElement("span", "", "")
+      );
+
+      const textWrap = button.lastElementChild;
+      textWrap.append(
+        makeTextElement("span", "step-title", step.title),
+        makeTextElement("span", "step-meta", step.meta)
+      );
+
+      button.addEventListener("click", () => {
+        renderStep(index, { scrollMain: true, keepStepVisible: true });
+      });
+
+      return button;
+    }
+
+    function makeFlowGroup(group) {
+      const groupItem = document.createElement("li");
+      groupItem.className = "flow-group";
+
+      const title = document.createElement("div");
+      title.className = "flow-group-title";
+      title.append(
+        makeTextElement("span", "", group.title),
+        makeTextElement("span", "flow-group-count", `${group.codes.length} 項`)
+      );
+
+      const list = document.createElement("ol");
+      list.className = "flow-group-list";
+
+      group.codes.forEach((code) => {
+        const index = stepIndexByCode.get(code);
+        if (index !== undefined) {
+          const item = document.createElement("li");
+          item.appendChild(makeStepButton(STEPS[index], index));
+          list.appendChild(item);
+        }
+      });
+
+      groupItem.append(title, list);
+      return groupItem;
+    }
+
+    function makeRouteCard(route) {
+      const card = document.createElement("article");
+      card.className = "route-card";
+      const heading = document.createElement("div");
+      heading.className = "assist-card-head";
+      heading.append(
+        makeTextElement("h3", "", route.title),
+        makeStatusTag(route.legalStatus)
+      );
+      card.append(
+        heading,
+        makeTextElement("p", "", route.trigger),
+        makeTextElement("span", "route-action", route.action)
+      );
+      return card;
+    }
+
+    function makeAssistCard(title, status, bodyNodes, options = {}) {
+      const card = document.createElement("article");
+      card.className = `assist-card${options.highRisk ? " high-risk" : ""}`;
+
+      const head = document.createElement("div");
+      head.className = "assist-card-head";
+      head.append(
+        makeTextElement("h4", "", title),
+        makeStatusTag(status)
+      );
+
+      card.appendChild(head);
+      bodyNodes.forEach((node) => card.appendChild(node));
+      return card;
+    }
+
+    function renderQuickEntries() {
+      quickEntryGrid.replaceChildren(...QUICK_ENTRIES.map((entry) => {
+        const button = document.createElement("button");
+        button.className = "quick-entry-card";
+        button.type = "button";
+        button.setAttribute("aria-label", `${entry.title}，${entry.action}`);
+        const meta = document.createElement("div");
+        meta.className = "entry-meta";
+        meta.append(
+          makeTextElement("span", "", `適合情境：${entry.scenario}`),
+          makeTextElement("span", "", `會帶你到：${entry.destination}`)
+        );
+        button.append(
+          makeTextElement("h3", "", entry.title),
+          meta,
+          makeTextElement("span", "quick-entry-action", entry.action)
+        );
+        button.addEventListener("click", () => {
+          activateTab(entry.targetTab, {
+            stepCode: entry.stepCode,
+            scrollTarget: entry.scrollTarget
+          });
+        });
+        return button;
+      }));
+    }
+
+    function renderReAppealPage() {
+      const getRule = (id) => DEADLINE_RULES.find((rule) => rule.id === id);
+      const seniorRule = getRule("D003");
+      const juniorRule = getRule("D004");
+      const correctionRule = getRule("D006");
+      const decisionRule = getRule("D008");
+      const serviceRule = getRule("D009");
+
+      reAppealPanel.replaceChildren(
+        makeAssistCard("再申訴提出期限", "verified", [
+          makeList([
+            `高中：${seniorRule.rule}`,
+            `國中小：${juniorRule.rule}`
+          ], "check-list")
+        ]),
+        makeAssistCard("再申訴補正", correctionRule.legalStatus, [
+          makeTextElement("p", "", correctionRule.rule),
+          makeTextElement("p", "assist-meta", correctionRule.reminder)
+        ]),
+        makeAssistCard("再申評會決定期限", decisionRule.legalStatus, [
+          makeList([
+            "收受再申訴書次日起 2 個月內。",
+            "評議決定後 10 日內作成再申訴評議決定書。",
+            `${serviceRule.title}：${serviceRule.rule}`
+          ], "check-list")
+        ]),
+        makeAssistCard("管轄提醒", "needsReview", [
+          makeList([
+            "不服學校申訴評議決定者，向主管機關提出再申訴。",
+            "誤向學校提出時，應提醒移轉管轄。"
+          ], "check-list")
+        ]),
+        makeAssistCard("行政訴訟提醒", "needsReview", [
+          makeList([
+            "僅原措施性質屬行政處分時，才提示「再申訴決定視同訴願決定」。",
+            "是否屬行政處分須依個案與法制意見人工確認。"
+          ], "check-list")
+        ]),
+        makeAssistCard(COMMITTEE_RULES.reAppeal.title, COMMITTEE_RULES.reAppeal.legalStatus, [
+          makeList(COMMITTEE_RULES.reAppeal.items, "check-list")
+        ]),
+        makeAssistCard("再申訴相關程序風險", "needsReview", [
+          makeList(RISK_RULES
+            .filter((risk) => risk.title.includes("救濟") || risk.legalRefs.join(" ").includes("再申訴") || risk.steps.includes("S012"))
+            .map((risk) => `${risk.id} ${risk.title}`), "check-list")
+        ])
+      );
+    }
+
+    function renderExternalTools() {
+      externalToolsEl.replaceChildren(...EXTERNAL_TOOLS.map(makeLinkedToolCard));
+    }
+
+    function renderCommitteePage() {
+      const displayItems = {
+        seniorHigh: [
+          "委員 7 至 15 人。",
+          "學生代表至少 1 人。",
+          "家長會代表。",
+          "校外專家至少 1 人。",
+          "任一性別不得少於三分之一。",
+          "學生獎懲委員會委員不得兼任。",
+          "出席 2/3 以上。",
+          "出席委員過半數同意。",
+          "無記名投票。"
+        ],
+        juniorElementary: [
+          "委員 5 至 15 人。",
+          "家長代表不得少於五分之一。",
+          "校外專家至少 1 人。",
+          "校長得聘學生代表，非強制。",
+          "任一性別不得少於三分之一。",
+          "學生管教懲處相關委員會委員不得兼任。",
+          "出席 2/3 以上。",
+          "出席委員過半數同意。",
+          "無記名投票。"
+        ],
+        specialEducationOverlay: [
+          "先判斷是鑑定、安置、輔導、支持服務爭議，或學校懲處、其他措施、決議爭議。",
+          "若由學校申評會處理，應增聘至少 2 名特教相關委員。",
+          "增聘委員均出席，始得開會。"
+        ]
+      };
+      const keys = ["seniorHigh", "juniorElementary", "specialEducationOverlay"];
+      committeePageEl.replaceChildren(...keys.map((key) => {
+        const rule = COMMITTEE_RULES[key];
+        const bodyNodes = [];
+        if (rule.level === "high") {
+          bodyNodes.push(makeTextElement("span", "risk-level high", "high risk"));
+        }
+        bodyNodes.push(makeList(displayItems[key], "check-list"));
+        return makeAssistCard(rule.title, rule.legalStatus, bodyNodes, { highRisk: rule.level === "high" });
+      }));
+    }
+
+    function makeDocumentCard(doc) {
+      return makeAssistCard(doc.title, doc.legalStatus, [
+        makeTextElement("p", "", `使用節點：${doc.usedInSteps.join("、")}`),
+        makeTextElement("p", "", `使用時機：${doc.timing}`),
+        makeTextElement("p", "assist-meta", `程序風險：${doc.riskNote}`),
+        makeTextElement("p", "assist-meta", "應記載事項："),
+        makeList(doc.requiredFields, "check-list")
+      ]);
+    }
+
+    function makeRiskCard(risk) {
+      const card = document.createElement("article");
+      card.className = `assist-card${risk.level === "high" ? " high-risk" : ""}`;
+      const head = document.createElement("div");
+      head.className = "assist-card-head";
+      head.append(
+        makeTextElement("h4", "", `${risk.id} ${risk.title}`),
+        makeTextElement("span", `risk-level ${risk.level}`, risk.level)
+      );
+      card.append(
+        head,
+        makeTextElement("p", "", `關聯步驟：${risk.steps.join("、")}`),
+        makeTextElement("p", "", `情境：${risk.scenario}`),
+        makeTextElement("p", "", `預防：${risk.prevention}`),
+        makeChipList(risk.legalRefs.map((text) => ({ text, legalStatus: risk.legalStatus })), "law-chip")
+      );
+      return card;
+    }
+
+    function renderDocumentCatalog() {
+      const sorted = [...DOCUMENT_REFS].sort((a, b) => {
+        const firstA = a.usedInSteps[0] || "";
+        const firstB = b.usedInSteps[0] || "";
+        return firstA.localeCompare(firstB) || a.id.localeCompare(b.id);
+      });
+      documentCatalogEl.replaceChildren(...sorted.map(makeDocumentCard));
+    }
+
+    function riskMatchesFilter(risk, filter) {
+      if (!filter || !filter.steps) {
+        return true;
+      }
+      return risk.steps.some((step) => filter.steps.includes(step));
+    }
+
+    function renderRiskCatalog(filterId = "all") {
+      const filter = RISK_FILTERS.find((item) => item.id === filterId) || RISK_FILTERS[0];
+      const groups = [
+        { level: "high", title: "High" },
+        { level: "medium", title: "Medium" },
+        { level: "low", title: "Low" }
+      ];
+
+      riskFiltersEl.querySelectorAll(".filter-button").forEach((button) => {
+        button.setAttribute("aria-pressed", button.dataset.filter === filter.id ? "true" : "false");
+      });
+
+      riskCatalogEl.replaceChildren(...groups.map((group) => {
+        const section = document.createElement("section");
+        section.className = "risk-group";
+        section.appendChild(makeTextElement("h3", "", group.title));
+        const list = document.createElement("div");
+        list.className = "catalog-grid";
+        const risks = RISK_RULES.filter((risk) => risk.level === group.level && riskMatchesFilter(risk, filter));
+        if (risks.length === 0) {
+          list.appendChild(makeTextElement("p", "assist-meta", "此節點目前沒有對應風險資料。"));
+        } else {
+          risks.forEach((risk) => list.appendChild(makeRiskCard(risk)));
+        }
+        section.appendChild(list);
+        return section;
+      }));
+    }
+
+    function renderRiskFilters() {
+      riskFiltersEl.replaceChildren(...RISK_FILTERS.map((filter) => {
+        const button = document.createElement("button");
+        button.className = "filter-button";
+        button.type = "button";
+        button.dataset.filter = filter.id;
+        button.setAttribute("aria-pressed", filter.id === "all" ? "true" : "false");
+        button.textContent = filter.label;
+        button.addEventListener("click", () => renderRiskCatalog(filter.id));
+        return button;
+      }));
+    }
+
+    function renderDeadlineRules() {
+      const grid = document.createElement("div");
+      grid.className = "assist-card-grid";
+
+      DEADLINE_RULES.forEach((rule) => {
+        grid.appendChild(makeAssistCard(rule.title, rule.legalStatus, [
+          makeTextElement("p", "", `適用：${rule.audience}`),
+          makeTextElement("p", "", `規則：${rule.rule}`),
+          makeTextElement("p", "assist-meta", rule.reminder)
+        ]));
+      });
+
+      deadlineRulesEl.replaceChildren(grid);
+    }
+
+    function renderCommitteeRules() {
+      const grid = document.createElement("div");
+      grid.className = "assist-card-grid";
+
+      Object.values(COMMITTEE_RULES).forEach((rule) => {
+        const bodyNodes = [];
+        if (rule.level === "high") {
+          bodyNodes.push(makeTextElement("span", "risk-level high", "high risk"));
+        }
+        bodyNodes.push(makeList(rule.items, "check-list"));
+        grid.appendChild(makeAssistCard(rule.title, rule.legalStatus, bodyNodes, { highRisk: rule.level === "high" }));
+      });
+
+      committeeRulesEl.replaceChildren(grid);
+    }
+
+    function renderRiskRules() {
+      const grid = document.createElement("div");
+      grid.className = "assist-card-grid";
+
+      RISK_RULES.forEach((risk) => {
+        const level = makeTextElement("span", `risk-level ${risk.level}`, risk.level);
+        const head = document.createElement("div");
+        head.className = "assist-card-head";
+        head.append(
+          makeTextElement("h4", "", `${risk.id} ${risk.title}`),
+          level
+        );
+
+        const card = document.createElement("article");
+        card.className = `assist-card${risk.level === "high" ? " high-risk" : ""}`;
+        card.append(
+          head,
+          makeTextElement("p", "", `關聯步驟：${risk.steps.join("、")}`),
+          makeTextElement("p", "", `情境：${risk.scenario}`),
+          makeTextElement("p", "", `預防：${risk.prevention}`),
+          makeChipList(risk.legalRefs.map((text) => ({ text, legalStatus: risk.legalStatus })), "law-chip")
+        );
+        grid.appendChild(card);
+      });
+
+      riskRulesEl.replaceChildren(grid);
+    }
+
+    backToFlow.addEventListener("click", () => {
+      focusAndScroll(flowPanel, flowPanel);
+    });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => activateTab(button.dataset.tab));
+      button.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activateTab(button.dataset.tab);
+        }
+      });
+    });
+
+    renderQuickEntries();
+    renderExternalTools();
+    specialRoutes.replaceChildren(...ROUTE_FLAGS.filter((route) => !["RF001", "RF002"].includes(route.id)).map(makeRouteCard));
+    renderReAppealPage();
+    renderDeadlineRules();
+    renderCommitteeRules();
+    renderCommitteePage();
+    renderRiskRules();
+    renderDocumentCatalog();
+    renderRiskFilters();
+    renderRiskCatalog();
+    flowList.replaceChildren(...FLOW_GROUPS.map(makeFlowGroup));
+    renderStep(0, { keepStepVisible: false });
+  </script>
+</body>
+</html>
