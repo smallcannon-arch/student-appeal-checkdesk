@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>學生申訴流程法規查核輔助系統 v0.5.10-alpha</title>
+  <title>學生申訴流程法規查核輔助系統 v0.5.10.1-hotfix</title>
   <style>
     :root {
       color-scheme: light;
@@ -2671,6 +2671,57 @@
       box-shadow: none;
     }
 
+    .route-guide-card > .route-guide-actions {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+    }
+
+    .route-guide-card > .route-guide-actions .route-guide-button,
+    .route-guide-card > .route-guide-actions .route-guide-link {
+      min-height: 44px;
+      padding: 10px 20px;
+      color: #fff;
+      background: var(--navy-900);
+      border: 1px solid var(--navy-900);
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 820;
+      line-height: 1.25;
+      box-shadow: 0 2px 0 rgba(23, 35, 58, 0.14);
+      transition: background-color 0.14s ease, border-color 0.14s ease, transform 0.14s ease;
+    }
+
+    .route-guide-card > .route-guide-actions .route-guide-button:hover,
+    .route-guide-card > .route-guide-actions .route-guide-button:focus-visible,
+    .route-guide-card > .route-guide-actions .route-guide-link:hover,
+    .route-guide-card > .route-guide-actions .route-guide-link:focus-visible {
+      background: var(--navy-800);
+      border-color: var(--navy-800);
+      transform: translateY(-1px);
+      outline: 3px solid rgba(14, 124, 114, 0.22);
+      outline-offset: 2px;
+    }
+
+    .route-guide-card > .route-guide-actions .route-guide-button.secondary,
+    .route-guide-card > .route-guide-actions .route-guide-link.secondary {
+      color: var(--navy-900);
+      background: transparent;
+      border: 1px solid rgba(56, 85, 123, 0.32);
+      box-shadow: none;
+    }
+
+    .route-guide-card > .route-guide-actions .route-guide-button.secondary:hover,
+    .route-guide-card > .route-guide-actions .route-guide-button.secondary:focus-visible,
+    .route-guide-card > .route-guide-actions .route-guide-link.secondary:hover,
+    .route-guide-card > .route-guide-actions .route-guide-link.secondary:focus-visible {
+      color: var(--navy-900);
+      background: rgba(238, 245, 251, 0.92);
+      border-color: rgba(14, 124, 114, 0.42);
+    }
+
     .appeal-workspace {
       grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
       gap: 20px;
@@ -2816,7 +2867,7 @@
       padding-top: 8px;
     }
 
-    /* v0.5.10-alpha unified page skeleton */
+    /* unified page skeleton */
     .page-shell,
     .topbar-inner,
     .primary-tabs,
@@ -3515,7 +3566,7 @@
           <div class="topbar-copy">
             <p class="kicker">STUDENT APPEAL CHECKDESK</p>
             <h1>學生申訴流程法規查核輔助系統</h1>
-            <p class="subtitle">v0.5.10-alpha｜行政承辦流程檢核草稿，統一頁面骨架與卷宗式版面。</p>
+            <p class="subtitle">v0.5.10.1-hotfix｜行政承辦流程檢核草稿，強化路線導引入口按鈕層級。</p>
             <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
           </div>
           <aside class="header-status-card" aria-label="使用邊界">
@@ -3585,7 +3636,7 @@
                     <h2 class="detail-title" id="detailTitle"></h2>
                     <p class="detail-summary" id="detailSummary"></p>
                   </div>
-                  <span class="version-chip step-primary-status">v0.5.10-alpha</span>
+                  <span class="version-chip step-primary-status">v0.5.10.1-hotfix</span>
                 </div>
               </header>
 
@@ -3769,7 +3820,7 @@
 
     <footer class="footer">
       <div class="footer-inner page-shell">
-        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.10-alpha｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜本頁只做程序查核，不取代申評會判斷。</p>
+        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.10.1-hotfix｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜本頁只做程序查核，不取代申評會判斷。</p>
         <p class="footer-status">資料狀態說明：本系統目前以教育部主管法規共用系統人工核對資料為基準；國中小申訴與再申訴仍為 40 日，高中為 30 日；申訴補正 7 日，再申訴補正 20 日。正式承辦仍應以最新法規、主管機關函釋、地方規範及校內規定為準。</p>
         <p>維護者：江志宏｜學生申訴流程法規查核輔助系統</p>
       </div>
