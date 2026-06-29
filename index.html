@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>學生申訴流程法規查核輔助系統 v0.5.9-alpha</title>
+  <title>學生申訴流程法規查核輔助系統 v0.5.10-alpha</title>
   <style>
     :root {
       color-scheme: light;
@@ -41,6 +41,8 @@
       --shadow: var(--shadow-soft);
       --radius: var(--radius-md);
       --scroll-offset: 120px;
+      --page-max: 1360px;
+      --page-gutter: 48px;
       font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -2492,7 +2494,7 @@
       line-height: 1.6;
     }
 
-    /* v0.5.9-alpha release layout polish */
+    /* release layout polish */
     .topbar-inner {
       padding: 18px 0 16px;
     }
@@ -2812,6 +2814,303 @@
     .footer-status {
       margin-top: 8px;
       padding-top: 8px;
+    }
+
+    /* v0.5.10-alpha unified page skeleton */
+    .page-shell,
+    .topbar-inner,
+    .primary-tabs,
+    .tab-context,
+    .app-main,
+    .footer-inner {
+      width: min(100% - var(--page-gutter), var(--page-max));
+      margin-inline: auto;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+    }
+
+    .topbar {
+      border-bottom-width: 2px;
+    }
+
+    .topbar-inner {
+      padding-block: 18px 16px;
+    }
+
+    .topbar-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 330px);
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header-status-card {
+      min-height: 0;
+      padding: 13px 15px;
+      background: rgba(255, 255, 255, 0.065);
+      border-color: rgba(255, 255, 255, 0.14);
+      border-left-width: 3px;
+      box-shadow: none;
+    }
+
+    .subtitle {
+      max-width: 820px;
+    }
+
+    .notice {
+      max-width: 960px;
+      margin-top: 10px;
+      padding: 8px 11px;
+      border-left-width: 3px;
+    }
+
+    .primary-tabs-shell {
+      background: rgba(255, 248, 239, 0.92);
+      border-bottom: 1px solid rgba(230, 221, 208, 0.9);
+    }
+
+    .primary-tabs {
+      padding-block: 11px 9px;
+    }
+
+    .tab-group {
+      padding: 0;
+    }
+
+    .tab-group-label {
+      flex-basis: 70px;
+      color: #5e6c7d;
+      font-size: 0.76rem;
+      font-weight: 780;
+    }
+
+    .primary-tab {
+      min-height: 36px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-weight: 760;
+    }
+
+    .tab-context {
+      margin-top: 0;
+      padding-bottom: 10px;
+      font-weight: 620;
+    }
+
+    .app-main {
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+
+    .page-head {
+      margin-bottom: 16px;
+      background: rgba(255, 253, 248, 0.92);
+      box-shadow: none;
+    }
+
+    .route-guide-section {
+      border-color: rgba(230, 221, 208, 0.86);
+      box-shadow: none;
+    }
+
+    .route-guide-card {
+      min-height: 340px;
+      border-left-color: var(--navy-700);
+      box-shadow: none;
+    }
+
+    .route-guide-card:hover {
+      border-left-color: var(--teal);
+      background: #fff;
+    }
+
+    .route-guide-reference {
+      color: #697688;
+    }
+
+    .general-workspace {
+      grid-template-columns: minmax(250px, 285px) minmax(0, 1fr);
+      gap: 0;
+      padding: 0;
+      background: rgba(255, 253, 248, 0.94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .general-workspace .flow-panel {
+      border: 0;
+      border-right: 1px solid rgba(230, 221, 208, 0.94);
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      background: rgba(248, 243, 235, 0.86);
+      box-shadow: none;
+    }
+
+    .general-workspace .panel-head {
+      background: rgba(245, 239, 230, 0.78);
+    }
+
+    .general-workspace .flow-group {
+      background: rgba(255, 253, 248, 0.76);
+      border-color: rgba(230, 221, 208, 0.82);
+    }
+
+    .general-workspace .flow-group-title {
+      background: rgba(245, 239, 230, 0.78);
+    }
+
+    .general-workspace .step-button {
+      min-height: 66px;
+      border-radius: 9px;
+    }
+
+    .general-workspace .step-button[aria-current="true"],
+    .general-workspace .step-button.is-active {
+      background: rgba(223, 241, 238, 0.58);
+      box-shadow: inset 3px 0 0 var(--teal);
+    }
+
+    .general-workspace .main-stack {
+      gap: 14px;
+      min-width: 0;
+      padding: 20px;
+      background: var(--paper);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    }
+
+    .general-workspace .step-primary-card {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .general-workspace .step-primary-header {
+      padding: 0 0 16px;
+      background: transparent;
+      border-bottom: 1px solid rgba(230, 221, 208, 0.95);
+    }
+
+    .general-workspace .step-primary-code {
+      border-radius: 10px;
+    }
+
+    .general-workspace .step-primary-status {
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: 10px;
+    }
+
+    .general-workspace .step-primary-body {
+      padding: 0;
+    }
+
+    .general-workspace .section-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .general-workspace .check-section {
+      padding: 18px 0;
+      background: transparent;
+      border: 0;
+      border-top: 1px solid rgba(230, 221, 208, 0.8);
+      border-radius: 0;
+    }
+
+    .general-workspace .check-section:first-child {
+      border-top: 0;
+    }
+
+    .general-workspace .check-section h3 {
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .general-workspace .check-section.step-purpose-strip {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: #fbf7ef;
+      border: 1px solid rgba(230, 221, 208, 0.86);
+      border-left: 4px solid var(--teal);
+      border-radius: var(--radius-sm);
+    }
+
+    .general-workspace .check-section.step-action-card {
+      padding-bottom: 20px;
+    }
+
+    .general-workspace .check-section.step-next-card {
+      margin-top: 2px;
+      padding: 13px 14px;
+      background: #f6faf8;
+      border: 1px solid rgba(14, 124, 114, 0.16);
+      border-left: 4px solid var(--teal);
+      border-radius: var(--radius-sm);
+    }
+
+    .general-workspace .next-actions {
+      gap: 7px;
+    }
+
+    .general-workspace .next-actions li {
+      position: relative;
+      padding: 4px 0 4px 24px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .general-workspace .next-actions li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      top: 3px;
+      color: var(--teal);
+      font-weight: 850;
+    }
+
+    .general-workspace .next-actions .branch-chip {
+      display: inline;
+      min-height: 0;
+      padding: 0;
+      color: #263344;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      font-size: 0.94rem;
+      font-weight: 650;
+      line-height: 1.65;
+    }
+
+    .general-workspace .assist-panel {
+      padding-top: 2px;
+      border-top: 1px solid rgba(230, 221, 208, 0.7);
+    }
+
+    .general-workspace .assist-details {
+      background: rgba(255, 253, 248, 0.82);
+      border-color: rgba(230, 221, 208, 0.78);
+    }
+
+    .general-workspace .assist-details summary {
+      min-height: 38px;
+      background: rgba(248, 242, 233, 0.72);
+      font-weight: 760;
+    }
+
+    .footer {
+      margin-top: 34px;
+      background: rgba(245, 239, 230, 0.72);
+      border-top: 1px solid rgba(230, 221, 208, 0.95);
+    }
+
+    .footer-inner {
+      padding-block: 16px 18px;
     }
 
     @media (min-width: 981px) {
@@ -3211,12 +3510,12 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="topbar-inner">
+      <div class="topbar-inner page-shell">
         <div class="topbar-layout">
           <div class="topbar-copy">
             <p class="kicker">STUDENT APPEAL CHECKDESK</p>
             <h1>學生申訴流程法規查核輔助系統</h1>
-            <p class="subtitle">v0.5.9-alpha｜行政承辦流程檢核草稿，整理正式發布版版面與視覺層級。</p>
+            <p class="subtitle">v0.5.10-alpha｜行政承辦流程檢核草稿，統一頁面骨架與卷宗式版面。</p>
             <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
           </div>
           <aside class="header-status-card" aria-label="使用邊界">
@@ -3233,7 +3532,7 @@
     </header>
 
     <div class="primary-tabs-shell">
-      <div class="primary-tabs" role="tablist" aria-label="學生申訴查核主頁籤">
+      <div class="primary-tabs page-shell" role="tablist" aria-label="學生申訴查核主頁籤">
         <div class="tab-group tab-group-main" aria-label="主要流程">
           <span class="tab-group-label" aria-hidden="true">主要流程</span>
           <div class="tab-group-list">
@@ -3250,10 +3549,10 @@
           </div>
         </div>
       </div>
-      <p class="tab-context" id="tabContext">先選擇案件類型，再進入對應查核路線。</p>
+      <p class="tab-context page-shell" id="tabContext">先選擇案件類型，再進入對應查核路線。</p>
     </div>
 
-    <main class="app-main" aria-label="學生申訴流程查核工具">
+    <main class="app-main page-shell" aria-label="學生申訴流程查核工具">
       <section class="tab-panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" data-panel="overview">
         <div class="page-head usage-hint">
           <h2>路線導引</h2>
@@ -3286,7 +3585,7 @@
                     <h2 class="detail-title" id="detailTitle"></h2>
                     <p class="detail-summary" id="detailSummary"></p>
                   </div>
-                  <span class="version-chip step-primary-status">v0.5.9-alpha</span>
+                  <span class="version-chip step-primary-status">v0.5.10-alpha</span>
                 </div>
               </header>
 
@@ -3469,8 +3768,8 @@
     </main>
 
     <footer class="footer">
-      <div class="footer-inner">
-        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.9-alpha｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜本頁只做程序查核，不取代申評會判斷。</p>
+      <div class="footer-inner page-shell">
+        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.10-alpha｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜本頁只做程序查核，不取代申評會判斷。</p>
         <p class="footer-status">資料狀態說明：本系統目前以教育部主管法規共用系統人工核對資料為基準；國中小申訴與再申訴仍為 40 日，高中為 30 日；申訴補正 7 日，再申訴補正 20 日。正式承辦仍應以最新法規、主管機關函釋、地方規範及校內規定為準。</p>
         <p>維護者：江志宏｜學生申訴流程法規查核輔助系統</p>
       </div>
