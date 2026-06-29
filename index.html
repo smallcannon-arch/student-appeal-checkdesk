@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>學生申訴流程法規查核輔助系統 v0.5.8.1-hotfix</title>
+  <title>學生申訴流程法規查核輔助系統 v0.5.9-alpha</title>
   <style>
     :root {
       color-scheme: light;
@@ -23,8 +23,8 @@
       --risk-soft: #fde7ec;
       --law-soft: #eef5fb;
       --status-soft: #f3f0e8;
-      --shadow-soft: 0 10px 28px rgba(23, 35, 58, 0.08);
-      --shadow-card: 0 14px 34px rgba(23, 35, 58, 0.1);
+      --shadow-soft: 0 8px 22px rgba(23, 35, 58, 0.07);
+      --shadow-card: 0 12px 30px rgba(23, 35, 58, 0.09);
       --radius-sm: 10px;
       --radius-md: 14px;
       --radius-lg: 20px;
@@ -2492,6 +2492,328 @@
       line-height: 1.6;
     }
 
+    /* v0.5.9-alpha release layout polish */
+    .topbar-inner {
+      padding: 18px 0 16px;
+    }
+
+    .topbar-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .topbar-copy {
+      min-width: 0;
+    }
+
+    .header-status-card {
+      align-self: stretch;
+      display: grid;
+      align-content: start;
+      gap: 9px;
+      padding: 14px 16px;
+      color: #edf6f5;
+      background: rgba(255, 255, 255, 0.075);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-left: 4px solid var(--teal);
+      border-radius: var(--radius-md);
+    }
+
+    .header-status-title {
+      margin: 0;
+      color: #fff7e7;
+      font-size: 0.92rem;
+      font-weight: 820;
+      line-height: 1.35;
+    }
+
+    .header-status-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #dce8ed;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .header-status-list li {
+      display: grid;
+      grid-template-columns: 0.55rem minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+    }
+
+    .header-status-list li::before {
+      content: "";
+      width: 0.4rem;
+      height: 0.4rem;
+      margin-top: 0.55em;
+      background: var(--teal);
+      border-radius: 999px;
+    }
+
+    .primary-tabs {
+      gap: 9px;
+    }
+
+    .tab-group {
+      padding: 2px 0;
+    }
+
+    .tab-group-label {
+      flex-basis: 72px;
+      color: #556579;
+      letter-spacing: 0.03em;
+    }
+
+    .tab-group-list {
+      gap: 8px;
+    }
+
+    .primary-tab {
+      min-height: 38px;
+      padding: 8px 13px;
+      border-radius: 12px;
+      line-height: 1.32;
+    }
+
+    .primary-tab[aria-selected="true"] {
+      background: var(--navy-900);
+      border-color: var(--navy-900);
+      box-shadow: inset 0 -3px 0 var(--teal);
+    }
+
+    .tab-context {
+      padding-bottom: 12px;
+    }
+
+    .page-head {
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .route-guide-section {
+      gap: 15px;
+      padding: 18px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .route-guide-section h3 {
+      font-size: 1.08rem;
+    }
+
+    .route-guide-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .route-guide-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 360px;
+      padding: 20px;
+      border-left: 6px solid var(--teal);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: none;
+    }
+
+    .route-guide-card h4 {
+      font-size: 1.12rem;
+      line-height: 1.38;
+    }
+
+    .route-guide-field {
+      display: grid;
+      gap: 3px;
+    }
+
+    .route-guide-field strong,
+    .route-guide-reference strong {
+      display: block;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+    }
+
+    .route-guide-reference {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid rgba(230, 221, 208, 0.9);
+    }
+
+    .route-guide-card .legal-ref-panel {
+      margin-top: 8px;
+      background: #f8fafc;
+    }
+
+    .route-guide-actions {
+      align-items: center;
+      padding-top: 12px;
+      margin-top: 0;
+    }
+
+    .route-guide-button,
+    .route-guide-link,
+    .external-link,
+    .s000-external-link,
+    .route-nav-button,
+    .return-route-link {
+      border-radius: 12px;
+      box-shadow: none;
+    }
+
+    .appeal-workspace {
+      grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .flow-panel {
+      border-radius: var(--radius-md);
+      box-shadow: none;
+    }
+
+    .flow-list {
+      gap: 10px;
+    }
+
+    .flow-group-title {
+      min-height: 36px;
+      background: #f5efe6;
+    }
+
+    .step-button {
+      min-height: 68px;
+      border-radius: 10px;
+    }
+
+    .step-button[aria-current="true"],
+    .step-button.is-active {
+      background: rgba(223, 241, 238, 0.72);
+      box-shadow: inset 4px 0 0 var(--teal);
+    }
+
+    .step-primary-card {
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .detail-header,
+    .step-primary-header {
+      padding: 18px 20px;
+      background: #fbf7ef;
+    }
+
+    .version-chip,
+    .step-primary-status {
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.78);
+      border-color: rgba(101, 115, 134, 0.18);
+    }
+
+    .section-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .check-section {
+      min-height: 0;
+      padding: 16px 18px;
+      border-left-width: 4px;
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+    }
+
+    .check-section.step-purpose-strip {
+      padding: 12px 15px;
+      background: #fffdf8;
+    }
+
+    .assist-panel,
+    .s000-supplement-panel {
+      gap: 10px;
+    }
+
+    .assist-details,
+    .document-ref,
+    .legal-ref-panel {
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+    }
+
+    .document-ref summary,
+    .assist-details summary {
+      min-height: 40px;
+      padding: 9px 12px;
+      background: #f8f2e9;
+      font-size: 0.9rem;
+    }
+
+    .legal-ref-summary {
+      color: #42566d;
+      background: #eef4f8;
+      border-color: rgba(102, 116, 135, 0.2);
+      font-size: 0.8rem;
+    }
+
+    .legal-ref-body,
+    .legal-ref-tooltip {
+      box-shadow: var(--shadow-soft);
+    }
+
+    .assist-card-grid,
+    .split-grid {
+      gap: 16px;
+    }
+
+    .assist-card,
+    .catalog-panel,
+    .document-ref,
+    .reference-item,
+    .risk-group {
+      box-shadow: none;
+      border-radius: var(--radius-sm);
+    }
+
+    .catalog-panel {
+      background: rgba(255, 253, 248, 0.96);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .footer {
+      width: 100%;
+      margin-top: 28px;
+      padding: 0;
+      color: var(--muted);
+      background: rgba(245, 239, 230, 0.96);
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      box-shadow: none;
+      text-align: left;
+    }
+
+    .footer-inner {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 20px;
+    }
+
+    .footer p {
+      line-height: 1.62;
+    }
+
+    .footer-status {
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
     @media (min-width: 981px) {
       body {
         overflow-x: hidden;
@@ -2599,6 +2921,15 @@
         width: min(100% - 22px, 1480px);
       }
 
+      .topbar-layout {
+        grid-template-columns: 1fr;
+        gap: 13px;
+      }
+
+      .header-status-card {
+        padding: 12px 13px;
+      }
+
       .topbar-inner {
         padding: 15px 0 13px;
       }
@@ -2693,6 +3024,10 @@
       .s000-route-card,
       .return-route-card {
         min-height: 0;
+      }
+
+      .footer-inner {
+        width: min(100% - 22px, 1480px);
       }
     }
 
@@ -2877,13 +3212,23 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="topbar-line">
-          <p class="kicker">STUDENT APPEAL CHECKDESK</p>
-          <span class="status-pill">靜態查核工具 · 不儲存個案資料</span>
+        <div class="topbar-layout">
+          <div class="topbar-copy">
+            <p class="kicker">STUDENT APPEAL CHECKDESK</p>
+            <h1>學生申訴流程法規查核輔助系統</h1>
+            <p class="subtitle">v0.5.9-alpha｜行政承辦流程檢核草稿，整理正式發布版版面與視覺層級。</p>
+            <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
+          </div>
+          <aside class="header-status-card" aria-label="使用邊界">
+            <p class="header-status-title">使用邊界</p>
+            <ul class="header-status-list">
+              <li>靜態查核工具</li>
+              <li>不儲存個案資料</li>
+              <li>不取代申評會判斷</li>
+              <li>法規仍需人工複核</li>
+            </ul>
+          </aside>
         </div>
-        <h1>學生申訴流程法規查核輔助系統</h1>
-        <p class="subtitle">v0.5.8.1-hotfix｜行政承辦流程檢核草稿，補強期限防誤用與特教雙軌提示。</p>
-        <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
       </div>
     </header>
 
@@ -2941,7 +3286,7 @@
                     <h2 class="detail-title" id="detailTitle"></h2>
                     <p class="detail-summary" id="detailSummary"></p>
                   </div>
-                  <span class="version-chip step-primary-status">v0.5.8.1-hotfix</span>
+                  <span class="version-chip step-primary-status">v0.5.9-alpha</span>
                 </div>
               </header>
 
@@ -3121,12 +3466,15 @@
         </div>
       </template>
 
-      <footer class="footer">
-        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.8.1-hotfix｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜使用方式：本頁只做程序查核，不取代申評會判斷。</p>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.9-alpha｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜本頁只做程序查核，不取代申評會判斷。</p>
         <p class="footer-status">資料狀態說明：本系統目前以教育部主管法規共用系統人工核對資料為基準；國中小申訴與再申訴仍為 40 日，高中為 30 日；申訴補正 7 日，再申訴補正 20 日。正式承辦仍應以最新法規、主管機關函釋、地方規範及校內規定為準。</p>
         <p>維護者：江志宏｜學生申訴流程法規查核輔助系統</p>
-      </footer>
-    </main>
+      </div>
+    </footer>
   </div>
 
   <script>
