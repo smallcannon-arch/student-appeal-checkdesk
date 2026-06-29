@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>學生申訴流程法規查核輔助系統 v0.5.8-alpha</title>
+  <title>學生申訴流程法規查核輔助系統 v0.5.8.1-hotfix</title>
   <style>
     :root {
       color-scheme: light;
@@ -2882,7 +2882,7 @@
           <span class="status-pill">靜態查核工具 · 不儲存個案資料</span>
         </div>
         <h1>學生申訴流程法規查核輔助系統</h1>
-        <p class="subtitle">v0.5.8-alpha｜行政承辦流程檢核草稿，收斂為四大入口與五個發布版頁籤。</p>
+        <p class="subtitle">v0.5.8.1-hotfix｜行政承辦流程檢核草稿，補強期限防誤用與特教雙軌提示。</p>
         <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
       </div>
     </header>
@@ -2894,7 +2894,7 @@
           <div class="tab-group-list">
             <button class="primary-tab" id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="panel-overview" data-tab="overview">路線導引</button>
             <button class="primary-tab" id="tab-general" type="button" role="tab" aria-selected="false" aria-controls="panel-general" data-tab="general">一般申訴流程</button>
-            <button class="primary-tab" id="tab-reappeal" type="button" role="tab" aria-selected="false" aria-controls="panel-reappeal" data-tab="reappeal">再申訴提醒</button>
+            <button class="primary-tab" id="tab-reappeal" type="button" role="tab" aria-selected="false" aria-controls="panel-reappeal" data-tab="reappeal">再申訴提醒(向主管機關申請)</button>
           </div>
         </div>
         <div class="tab-group tab-group-tools" aria-label="查核工具">
@@ -2941,7 +2941,7 @@
                     <h2 class="detail-title" id="detailTitle"></h2>
                     <p class="detail-summary" id="detailSummary"></p>
                   </div>
-                  <span class="version-chip step-primary-status">v0.5.8-alpha</span>
+                  <span class="version-chip step-primary-status">v0.5.8.1-hotfix</span>
                 </div>
               </header>
 
@@ -2998,7 +2998,7 @@
 
       <section class="tab-panel" id="panel-reappeal" role="tabpanel" aria-labelledby="tab-reappeal" data-panel="reappeal" hidden>
         <div class="page-head">
-          <h2>再申訴提醒｜主管機關受理</h2>
+          <h2>再申訴提醒(向主管機關申請)｜主管機關受理</h2>
           <p>再申訴由各該主管機關受理，並由主管機關設立之學生再申訴評議委員會審理。學校不是再申訴評議機關；學校端應重點確認救濟教示、送達證明、卷證留存，以及接獲主管機關通知後的說明與資料提供。</p>
         </div>
         <div class="assist-card-grid" id="reAppealPanel"></div>
@@ -3122,8 +3122,8 @@
       </template>
 
       <footer class="footer">
-        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.8-alpha｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜使用方式：本頁只做程序查核，不取代申評會判斷。</p>
-        <p class="footer-status">資料狀態說明：法規資料分為已核對、待承辦單位複核、來源待補、需補地方或校內規範、外部專法程序等狀態。法條要旨僅供承辦查核輔助；正式適用仍應以最新官方法規、主管機關函釋、地方規範與校內規定為準。</p>
+        <p><strong>靜態查核工具</strong>｜不儲存個案資料｜版本：v0.5.8.1-hotfix｜資料基準：NotebookLM 整理草稿，法源仍需人工核對｜使用方式：本頁只做程序查核，不取代申評會判斷。</p>
+        <p class="footer-status">資料狀態說明：本系統目前以教育部主管法規共用系統人工核對資料為基準；國中小申訴與再申訴仍為 40 日，高中為 30 日；申訴補正 7 日，再申訴補正 20 日。正式承辦仍應以最新法規、主管機關函釋、地方規範及校內規定為準。</p>
         <p>維護者：江志宏｜學生申訴流程法規查核輔助系統</p>
       </footer>
     </main>
@@ -3310,6 +3310,13 @@
       launch: "依靜態工具邊界、法規狀態、流程節點、外部連結與手機版檢查上線前風險。"
     };
 
+    const DEADLINE_MISUSE_WARNING = "注意：高級中等學校與國中小期限不同。高中申訴、再申訴為 30 日；國中小申訴、再申訴為 40 日。請勿將高中 30 日規定誤用於國中小案件。";
+    const CORRECTION_MISUSE_WARNING = "申訴補正與再申訴補正不同：申訴補正為 7 日；再申訴補正為 20 日。請勿混用。";
+    const DEADLINE_MAINTENANCE_NOTE = "已核對：高中 30 日、國中小 40 日；申訴補正 7 日、再申訴補正 20 日。請勿誤改。";
+    const SPECIAL_EDUCATION_TRACK_WARNING = "注意：鑑安輔爭議找主管機關；學校懲處、措施或決議爭議才進學校學生申訴。";
+    const JUNIOR_COMMITTEE_WARNING = "注意：國中小申評會委員為 5 至 15 人；學生代表為校長得聘，請勿誤套高中學生代表必聘規定。";
+    const SPECIAL_EDUCATION_COMMITTEE_WARNING = "注意：鑑定、安置、輔導及支持服務爭議，應先確認主管機關鑑安輔申訴路線。";
+
     const ROUTE_GUIDE_SECTIONS = [
       {
         title: "請先選擇案件類型",
@@ -3321,6 +3328,7 @@
             precheck: "疑似校園性別事件、校園霸凌事件、特殊教育鑑定安置輔導支持服務爭議等應先依專法處置之情形。",
             referenceText: "參考依據：高申辦法 §8｜國教法 §45、§46",
             legalRefIds: ["appeal-rule-8", "national-education-law-45", "national-education-law-46"],
+            note: DEADLINE_MISUSE_WARNING,
             actions: [
               { type: "navigate", label: "進入一般申訴流程", targetTab: "general", stepCode: "S001", scrollTarget: "stepPrimaryCard" }
             ]
@@ -3332,7 +3340,7 @@
             precheck: "鑑定、安置、輔導及支持服務爭議，應向主管機關鑑安輔申評會提起申訴；若是特教學生對學校懲處、措施或決議不服，才進入學校學生申訴，並套用特教加嚴檢核。",
             referenceText: "參考依據：特教法 §24｜特教申訴辦法 §4、§5、§27、§28",
             legalRefIds: ["special-education-law-24", "special-appeal-rule-4", "special-appeal-rule-5", "special-appeal-rule-27", "special-appeal-rule-28"],
-            note: "注意：鑑定、安置、輔導及支持服務爭議，應找主管機關鑑安輔申評會，不是由學校一般申評會處理。",
+            note: SPECIAL_EDUCATION_TRACK_WARNING,
             actions: [
               { type: "navigate", label: "學校措施爭議：進入一般申訴流程", targetTab: "general", stepCode: "S001", scrollTarget: "stepPrimaryCard" },
               { type: "navigate", label: "查看特教加嚴檢核", targetTab: "committee", scrollTarget: "panelHeading", secondary: true }
@@ -3408,6 +3416,7 @@
         audience: "高級中等學校",
         rule: "收受或知悉原措施次日起 30 日內。",
         reminder: "只做期限文字提醒；是否逾期仍由承辦人依卷證與送達資料人工判斷。",
+        maintenanceNote: DEADLINE_MAINTENANCE_NOTE,
         legalStatus: "verified"
       },
       {
@@ -3416,22 +3425,25 @@
         audience: "國民中小學",
         rule: "收受或知悉原措施次日起 40 日內。",
         reminder: "請先確認學制與適用規範，再檢核起算日。",
+        maintenanceNote: DEADLINE_MAINTENANCE_NOTE,
         legalStatus: "verified"
       },
       {
         id: "D003",
         title: "高中再申訴提出期限",
         audience: "高級中等學校",
-        rule: "評議決定書達到次日起 30 日內。",
-        reminder: "達到日期與送達證明須可追溯。",
+        rule: "申訴評議決定書送達次日起 30 日內。",
+        reminder: "送達日期與送達證明須可追溯。",
+        maintenanceNote: DEADLINE_MAINTENANCE_NOTE,
         legalStatus: "verified"
       },
       {
         id: "D004",
         title: "國中小再申訴提出期限",
         audience: "國民中小學",
-        rule: "申訴評議書達到次日起 40 日內。",
+        rule: "申訴評議書送達次日起 40 日內。",
         reminder: "請同步檢核再申訴權利告知是否正確。",
+        maintenanceNote: DEADLINE_MAINTENANCE_NOTE,
         legalStatus: "verified"
       },
       {
@@ -3440,6 +3452,7 @@
         audience: "一般申訴",
         rule: "7 日內。",
         reminder: "補正通知應列明補正事項、期限與逾期效果。",
+        maintenanceNote: DEADLINE_MAINTENANCE_NOTE,
         legalStatus: "verified"
       },
       {
@@ -3448,6 +3461,7 @@
         audience: "再申訴",
         rule: "20 日內。",
         reminder: "補正與送達紀錄應併入卷宗。",
+        maintenanceNote: DEADLINE_MAINTENANCE_NOTE,
         legalStatus: "verified"
       },
       {
@@ -3521,7 +3535,8 @@
           "委員任期一年。",
           "學校學生管教懲處相關委員會委員不得兼任同校國中小申評會委員。",
           "出席門檻 2/3，全體出席委員過半數同意。",
-          "評議決定採無記名投票。"
+          "評議決定採無記名投票。",
+          JUNIOR_COMMITTEE_WARNING
         ]
       },
       specialEducationOverlay: {
@@ -3532,8 +3547,10 @@
           "先由承辦人手動確認是否為特殊教育學生，不連動或整合任何真實學生資料。",
           "先判斷是「鑑定、安置、輔導及支持服務爭議」或「學校懲處、其他措施或決議爭議」。",
           "鑑定、安置、輔導及支持服務爭議由主管機關鑑安輔申評會處理。",
+          "特教學生對學校懲處、其他措施或決議不服，由學校申評會處理時，應增聘至少 2 名特教相關委員，且增聘委員均出席始得開會。",
           "特殊教育學校以外之高級中等以下學校處理特教學生申訴或再申訴時，應增聘至少 2 名與特殊教育需求相關之校外特殊教育學者專家、特殊教育家長團體代表或其他特殊教育專業人員。",
-          "增聘委員均出席，始得開會。"
+          "增聘委員均出席，始得開會。",
+          SPECIAL_EDUCATION_COMMITTEE_WARNING
         ]
       },
       reAppeal: {
@@ -3803,7 +3820,7 @@
         steps: ["S001", "S006", "S012"],
         scenario: "以處分作成日取代收受或知悉日，或未區分高中、國中小期限。",
         legalRefs: ["DEADLINE_RULES"],
-        prevention: "以送達證明、知悉紀錄與學制分流人工判斷，不做自動計算。",
+        prevention: "以送達證明、知悉紀錄與學制分流人工判斷，不做自動計算；高中申訴、再申訴為 30 日，國中小為 40 日，請勿誤套。",
         legalStatus: "verified"
       },
       {
@@ -4300,10 +4317,25 @@
         meta: "申訴期間、本校權責、移送",
         summary: "確認收受或知悉日期、適用學制期限、本校權責，以及是否有誤投或應移送情形。",
         goal: "先把期限起算資料、管轄權責與誤投處理釐清，避免逾期、誤用學制期限或無管轄仍進入實體審查。",
+        checks: [
+          "確認申訴人收受或知悉原措施的日期，並標註高中或國中小適用期限。",
+          DEADLINE_MISUSE_WARNING,
+          "確認申訴標的是否由本校作成，或是否屬本校應處理之學生權益事項。",
+          "涉及他校、跨校活動、實習場域、校外機構或主管機關處分者，標註權責關係與移送需求。",
+          "若非本校權責，準備移送、轉知或回覆不受理理由。",
+          "保留期限判斷、移送日期、移送對象與通知紀錄。"
+        ],
         next: ["本校有權責且期限無明顯疑義者進入 S004。", "無權責或誤投者，作成移送、轉知或不受理紀錄，並確認是否仍有校內保護義務。"]
       }),
       makeFlowStep("S005", {
         code: "S004",
+        checks: [
+          "列明需補正項目，不以籠統文字要求全部重寫。",
+          "告知補正期限、逾期效果、聯絡窗口與可協助事項。",
+          CORRECTION_MISUSE_WARNING,
+          "涉及未成年學生時，確認法定代理人、實際照顧者或學生本人意願的處理方式。",
+          "補正後重新檢核 S002 至 S003。"
+        ],
         next: ["補正完成者進入 S005。", "逾期未補正者，回到 S005 檢核不受理通知內容。"]
       }),
       makeFlowStep("S006", {
@@ -4404,6 +4436,8 @@
         checks: [
           "檢查評議決定書是否附記再申訴期間與受理機關。",
           "區分學制：高中 30 日，國中小 40 日。",
+          DEADLINE_MISUSE_WARNING,
+          CORRECTION_MISUSE_WARNING,
           "確認送達對象與送達日期。",
           "保存申訴書、評議決定書、送達證明及卷證資料。",
           "若後續接獲主管機關或再申評會通知，依限提出原措施說明與相關文件。"
@@ -5613,6 +5647,7 @@
           "再申評會由主管機關設立。",
           "外部專家學者人數應超過委員總數二分之一。",
           "特殊教育學生再申訴案應增聘至少 2 名特教相關委員，且增聘委員均出席始得開會。",
+          "特殊教育學生再申訴案，仍應注意特教申訴服務辦法之增聘特教相關委員及均出席規定。",
           "再申訴決定由主管機關端作成，學校端重點是配合說明與卷證提供。"
         ], "check-list")
       );
@@ -5629,6 +5664,8 @@
             "國民小學及國民中學：收到申訴評議決定書次日起 40 日內提出。",
             "再申訴書件不合法定程式但可補正者，主管機關得通知於 20 日內補正。"
           ], "check-list"),
+          makeTextElement("p", "route-risk-note", DEADLINE_MISUSE_WARNING),
+          makeTextElement("p", "route-risk-note", CORRECTION_MISUSE_WARNING),
           makeTextElement("p", "assist-meta", "承辦提醒：學校端重點是決定書教示文字、送達日期與送達證明是否清楚。")
         ]),
         makeAssistCard("三、學校端要做什麼？", "verified", [
@@ -5754,12 +5791,15 @@
           "學生管教懲處相關委員會委員不得兼任。",
           "出席 2/3 以上。",
           "出席委員過半數同意。",
-          "無記名投票。"
+          "無記名投票。",
+          JUNIOR_COMMITTEE_WARNING
         ],
         specialEducationOverlay: [
           "先判斷是鑑定、安置、輔導、支持服務爭議，或學校懲處、其他措施、決議爭議。",
+          "特教學生對學校懲處、其他措施或決議不服，由學校申評會處理時，應增聘至少 2 名特教相關委員，且增聘委員均出席始得開會。",
           "若由學校申評會處理，應增聘至少 2 名特教相關委員。",
-          "增聘委員均出席，始得開會。"
+          "增聘委員均出席，始得開會。",
+          SPECIAL_EDUCATION_COMMITTEE_WARNING
         ]
       };
       const keys = ["seniorHigh", "juniorElementary", "specialEducationOverlay"];
@@ -5863,15 +5903,21 @@
       grid.className = "assist-card-grid";
 
       DEADLINE_RULES.forEach((rule) => {
-        grid.appendChild(makeAssistCard(rule.title, rule.legalStatus, [
+        const bodyNodes = [
           makeTextElement("p", "", `適用：${rule.audience}`),
           makeTextElement("p", "", `規則：${rule.rule}`),
           makeTextElement("p", "assist-meta", rule.reminder)
-        ]));
+        ];
+        if (rule.maintenanceNote) {
+          bodyNodes.push(makeTextElement("p", "assist-meta", rule.maintenanceNote));
+        }
+        grid.appendChild(makeAssistCard(rule.title, rule.legalStatus, bodyNodes));
       });
 
       deadlineRulesEl.replaceChildren(
         makeAssistIntro("本區僅提供文字提醒，不進行日期自動計算。"),
+        makeTextElement("p", "route-risk-note", DEADLINE_MISUSE_WARNING),
+        makeTextElement("p", "route-risk-note", CORRECTION_MISUSE_WARNING),
         grid
       );
     }
