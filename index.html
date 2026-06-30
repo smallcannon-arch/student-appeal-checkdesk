@@ -2722,6 +2722,73 @@
       border-color: rgba(14, 124, 114, 0.42);
     }
 
+    .route-guide-selector-section {
+      gap: 16px;
+    }
+
+    .route-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .route-choice-button {
+      display: grid;
+      gap: 6px;
+      min-height: 104px;
+      padding: 14px;
+      color: var(--ink);
+      background: rgba(255, 253, 248, 0.88);
+      border: 1px solid rgba(230, 221, 208, 0.94);
+      border-left: 4px solid rgba(56, 85, 123, 0.28);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: none;
+    }
+
+    .route-choice-button[aria-selected="true"] {
+      background: #fff;
+      border-color: rgba(14, 124, 114, 0.42);
+      border-left-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(14, 124, 114, 0.1);
+    }
+
+    .route-choice-button:hover {
+      background: #fff;
+      border-left-color: var(--teal);
+    }
+
+    .route-choice-button:focus-visible {
+      outline: 3px solid rgba(14, 124, 114, 0.24);
+      outline-offset: 2px;
+    }
+
+    .route-choice-title {
+      color: var(--navy-900);
+      font-size: 0.98rem;
+      font-weight: 820;
+      line-height: 1.35;
+    }
+
+    .route-choice-hint {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .route-guide-detail-card {
+      min-height: 0;
+      padding: 22px;
+      border-left-color: var(--teal);
+      background: #fff;
+    }
+
+    .route-guide-detail-card .route-guide-reference {
+      margin-top: 0;
+    }
+
     .appeal-workspace {
       grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
       gap: 20px;
@@ -3164,6 +3231,12 @@
       padding-block: 16px 18px;
     }
 
+    @media (max-width: 980px) {
+      .route-choice-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media (min-width: 981px) {
       body {
         overflow-x: hidden;
@@ -3242,6 +3315,7 @@
     @media (max-width: 1160px) {
       .route-grid,
       .route-guide-grid,
+      .route-choice-grid,
       .s000-route-card-grid,
       .external-tool-grid,
       .return-route-grid,
@@ -3566,7 +3640,7 @@
           <div class="topbar-copy">
             <p class="kicker">STUDENT APPEAL CHECKDESK</p>
             <h1>學生申訴流程法規查核輔助系統</h1>
-            <p class="subtitle">v0.5.10.1-hotfix｜行政承辦流程檢核草稿，強化路線導引入口按鈕層級。</p>
+            <p class="subtitle">v0.5.10.1-hotfix｜行政承辦流程檢核草稿，整理路線導引版面與入口欄位名稱。</p>
             <p class="notice">本工具僅輔助檢查程序、期限、文件與分流風險；實際案件仍應依現行法規、主管機關函釋、校內學生申訴評議規定與個案事實辦理。</p>
           </div>
           <aside class="header-status-card" aria-label="使用邊界">
@@ -4021,9 +4095,10 @@
         cards: [
           {
             title: "一般學生申訴",
+            selectorHint: "一般懲處、措施、決議或不作為。",
             judgment: "學生對學校懲處、其他措施、決議或依法申請事項不作為不服。",
-            context: "記過、懲處、校內措施、決議、不作為。",
-            precheck: "疑似校園性別事件、校園霸凌事件、特殊教育鑑定安置輔導支持服務爭議等應先依專法處置之情形。",
+            context: "記過、懲處、校內措施、決議、不作為等一般學生權益救濟事項。",
+            precheck: "疑似校園性別事件、校園霸凌事件、特殊教育鑑定安置輔導支持服務爭議或兒少保護等情形，請改走相應入口或專法程序。",
             referenceText: "參考依據：高申辦法 §8｜國教法 §45、§46",
             legalRefIds: ["appeal-rule-8", "national-education-law-45", "national-education-law-46"],
             note: DEADLINE_MISUSE_WARNING,
@@ -4033,12 +4108,13 @@
           },
           {
             title: "特殊教育學生申訴",
-            judgment: "先分清楚是主管機關鑑安輔申訴，還是學校措施之申訴。",
+            selectorHint: "先分清鑑安輔或學校措施。",
+            judgment: "先分清楚是主管機關鑑安輔申訴，還是學校措施申訴。",
             context: "學生具有特殊教育身分，且案件涉及鑑定、安置、輔導、支持服務爭議，或特教學生對學校懲處、其他措施、決議不服。",
-            precheck: "鑑定、安置、輔導及支持服務爭議，應向主管機關鑑安輔申評會提起申訴；若是特教學生對學校懲處、措施或決議不服，才進入學校學生申訴，並套用特教加嚴檢核。",
+            precheck: "非特殊教育學生，或案件主要涉及性平、霸凌、兒少保護等專法事件者，請改走一般學生申訴、性別事件或校園霸凌入口。",
             referenceText: "參考依據：特教法 §24｜特教申訴辦法 §4、§5、§27、§28",
             legalRefIds: ["special-education-law-24", "special-appeal-rule-4", "special-appeal-rule-5", "special-appeal-rule-27", "special-appeal-rule-28"],
-            note: SPECIAL_EDUCATION_TRACK_WARNING,
+            note: "注意：鑑定、安置、輔導及支持服務爭議，應向主管機關鑑安輔申評會提起申訴；若是特教學生對學校懲處、措施或決議不服，才進入學校學生申訴，並套用特教加嚴檢核。",
             actions: [
               { type: "navigate", label: "學校措施爭議：進入一般申訴流程", targetTab: "general", stepCode: "S001", scrollTarget: "stepPrimaryCard" },
               { type: "navigate", label: "查看特教加嚴檢核", targetTab: "committee", scrollTarget: "panelHeading", secondary: true }
@@ -4046,9 +4122,10 @@
           },
           {
             title: "性別事件申復／申訴銜接",
+            selectorHint: "性平先申復，申復後再銜接。",
             judgment: "性平案應先依性平法程序進行申復；申復結果仍不服時，才走申訴。",
             context: "疑似校園性別事件，或性平事件已完成申復後，學校學生對申復結果仍不服。",
-            precheck: "未完成申復前，不宜直接導入學生申訴流程。",
+            precheck: "非校園性別事件者，或尚未完成性平申復卻要直接進學生申訴者，請回到一般學生申訴或性平事件程序確認。",
             referenceText: "參考依據：性平法 §37、§39",
             legalRefIds: ["gender-law-37", "gender-law-39"],
             note: "已完成申復且對申復結果不服者，進入一般申訴流程後，請於期限與管轄節點確認期間與受理規則。",
@@ -4059,9 +4136,10 @@
           },
           {
             title: "校園霸凌申訴／陳情銜接",
+            selectorHint: "行為人申訴、被行為人陳情。",
             judgment: "行為人學生不服終局處理走申訴；被行為人不服走主管機關陳情。",
             context: "疑似校園霸凌事件，或霸凌終局實體處理後不服。",
-            precheck: "行為人學生不服終局實體處理，可能銜接學生申訴；被行為人不服終局實體處理，原則上應確認主管機關陳情路線。",
+            precheck: "非校園霸凌事件者，或一般懲處、措施、決議、不作為爭議者，請改走一般學生申訴入口；被行為人不服終局處理者，請確認主管機關陳情路線。",
             referenceText: "參考依據：霸凌準則 §48、§49",
             legalRefIds: ["bullying-rule-48", "bullying-rule-49"],
             note: "被行為人不服終局實體處理，原則上不是學生申訴主線，應確認主管機關陳情路線。",
@@ -6274,6 +6352,28 @@
       return field;
     }
 
+    let selectedRouteGuideIndex = 0;
+
+    function makeRouteChoiceButton(cardConfig, index, isSelected) {
+      const button = document.createElement("button");
+      button.className = "route-choice-button";
+      button.type = "button";
+      button.id = `routeChoice-${index}`;
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", isSelected ? "true" : "false");
+      button.setAttribute("aria-controls", "routeGuideDetail");
+      button.dataset.routeIndex = String(index);
+      button.append(
+        makeTextElement("span", "route-choice-title", cardConfig.title),
+        makeTextElement("span", "route-choice-hint", cardConfig.selectorHint || cardConfig.judgment || "")
+      );
+      button.addEventListener("click", () => {
+        selectedRouteGuideIndex = index;
+        renderQuickEntries({ focusDetail: true });
+      });
+      return button;
+    }
+
     function makeRouteGuideCard(cardConfig) {
       const card = document.createElement("article");
       card.className = "route-guide-card";
@@ -6283,22 +6383,24 @@
 
       card.appendChild(makeTextElement("h4", "", cardConfig.title));
       if (cardConfig.judgment) {
-        card.appendChild(makeRouteGuideField("一句話判斷", cardConfig.judgment));
+        card.appendChild(makeRouteGuideField("初步判斷", cardConfig.judgment));
       }
       if (cardConfig.context) {
-        card.appendChild(makeRouteGuideField("適用", cardConfig.context));
+        card.appendChild(makeRouteGuideField("適用規定", cardConfig.context));
       } else if (cardConfig.description) {
         card.appendChild(makeTextElement("p", "", cardConfig.description));
       }
       if (cardConfig.precheck) {
-        const label = cardConfig.title === "一般學生申訴" ? "先排除" : "先判斷";
-        card.appendChild(makeRouteGuideField(label, cardConfig.precheck));
+        card.appendChild(makeRouteGuideField("不適用本路線", cardConfig.precheck));
       }
       if (cardConfig.nextStep) {
         card.appendChild(makeTextElement("p", "route-next-step", `下一步：${cardConfig.nextStep}`));
       }
       if (cardConfig.referenceText) {
-        card.appendChild(makeTextElement("p", "route-guide-reference", cardConfig.referenceText));
+        card.appendChild(makeRouteGuideField(
+          "參考依據",
+          cardConfig.referenceText.replace(/^參考依據：/, "")
+        ));
       }
       if (cardConfig.note) {
         card.appendChild(makeTextElement("p", "route-risk-note", cardConfig.note));
@@ -6311,25 +6413,51 @@
       return card;
     }
 
-    function renderQuickEntries() {
+    function renderQuickEntries(options = {}) {
       const stack = document.createElement("div");
       stack.className = "route-guide-stack";
 
       ROUTE_GUIDE_SECTIONS.forEach((sectionConfig) => {
+        const cards = sectionConfig.cards || [];
+        if (cards.length === 0) {
+          return;
+        }
+
+        selectedRouteGuideIndex = Math.min(Math.max(selectedRouteGuideIndex, 0), cards.length - 1);
+        const selectedCard = cards[selectedRouteGuideIndex];
         const section = document.createElement("section");
-        section.className = "route-guide-section";
-        const grid = document.createElement("div");
-        grid.className = "route-guide-grid";
-        sectionConfig.cards.forEach((cardConfig) => grid.appendChild(makeRouteGuideCard(cardConfig)));
+        section.className = "route-guide-section route-guide-selector-section";
+        const selector = document.createElement("div");
+        selector.className = "route-choice-grid";
+        selector.setAttribute("role", "tablist");
+        selector.setAttribute("aria-label", "路線導引案件類型選擇");
+        cards.forEach((cardConfig, index) => {
+          selector.appendChild(makeRouteChoiceButton(cardConfig, index, index === selectedRouteGuideIndex));
+        });
+
+        const detail = makeRouteGuideCard(selectedCard);
+        detail.classList.add("route-guide-detail-card");
+        detail.id = "routeGuideDetail";
+        detail.setAttribute("role", "tabpanel");
+        detail.setAttribute("aria-labelledby", `routeChoice-${selectedRouteGuideIndex}`);
+        detail.setAttribute("tabindex", "-1");
         section.append(
           makeTextElement("h3", "", sectionConfig.title),
-          grid
+          selector,
+          detail
         );
         stack.appendChild(section);
       });
 
       quickEntryGrid.className = "route-guide-stack";
       quickEntryGrid.replaceChildren(...Array.from(stack.children));
+
+      if (options.focusDetail) {
+        const detail = document.querySelector("#routeGuideDetail");
+        if (detail) {
+          focusAndScroll(detail, detail);
+        }
+      }
     }
 
     function renderReAppealPage() {
